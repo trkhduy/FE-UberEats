@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&display=swap');
+// Khai báo kích thước tương ứng với màn hình thiết bị
+
+@mixin Reponsive($canvas) {
+
+    @media only screen and (min-width: $canvas) {
+        @content;
+    }
+}
+
+.login {
+    min-height: 100vh;
+    width: 50%;
+    min-width: 600px;
+    max-width: 1024px;
+    margin: 0 auto;
+    font-family: 'Poppins', sans-serif;
+
+
+
+    @media only screen and (max-width: 700px) {
+        min-width: calc(100% - 40px);
+    }
+
+    h1 {
+        margin-top: 50px;
+        padding: 20px 0;
+    }
+
+    .input_login {
+        width: 100% !important;
+        padding: 10px;
+    }
+
+    .social {
+        padding: 15px 0;
+        text-align: center;
+        margin-top: 12px;
+        font-size: larger;
+        font-weight: 500;
+        border-radius: 10px;
+        border: 2px solid #DB4437;
+        color: #DB4437;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #DB4437;
+            color: #fff;
+        }
+
+        &:last-child {
+            &:hover {
+                background-color: #4285F4;
+                color: #fff;
+            }
+
+            color: #4285F4;
+            border-color: #4285F4;
+        }
+
+    }
+
+}
