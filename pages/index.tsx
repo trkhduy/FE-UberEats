@@ -18,8 +18,6 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&display=swap" rel="stylesheet" />
       
       </Head>
-
-
     </>
   )
 }
