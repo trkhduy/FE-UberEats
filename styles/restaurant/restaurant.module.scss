@@ -1,0 +1,148 @@
+.page {
+    box-sizing: border-box;
+
+    * {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+
+    .banner {
+        width: 100%;
+        height: 300px;
+        // min-width: ;
+        overflow: hidden;
+        background-image: url('https://marketplace.foodotawp.com/wp-content/uploads/2021/04/Arcadian.jpg');
+        background-position: bottom;
+    }
+
+    .head {
+        width: 100%;
+        background-color: #fff;
+        // max-height: 100px;
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            max-width: 1240px;
+
+            @media screen and (max-width:576px) {
+                width: 100%;
+                padding: 0 20px;
+            }
+
+            .avatar {
+                width: 180px;
+
+                margin-top: -40px;
+                margin-right: 20px;
+                overflow: hidden;
+
+                img {
+                    border: 6px solid #fff;
+                    border-radius: 50% 50% 0 0;
+                    border-bottom: 0px;
+                    position: relative;
+                    z-index: 1;
+                    height: 100%;
+                    background-color: #fff;
+                }
+            }
+
+            .star {
+                padding-top: 16px;
+
+                li {
+                    margin: 1px;
+                }
+            }
+
+            .name {
+
+                margin: 8px 0;
+                font-size: xx-large;
+            }
+
+            .address {
+                vertical-align: middle;
+                color: gray;
+                letter-spacing: 1.03px;
+
+                img {
+                    margin-bottom: -4px;
+                    padding-right: 4px;
+                }
+            }
+
+            .workingHour {
+                padding: 14px 26px;
+                font-weight: 600;
+                letter-spacing: 1.03px;
+                background-color: #FFD95A;
+                color: #4C3D3D;
+            }
+        }
+    }
+
+    //body 
+    .body {
+        background-color: #f2f2f2;
+        height: 2000px;
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            max-width: 1240px;
+            padding: 40px 0;
+
+            .nav {
+                padding: 26px 0 14px 26px;
+                background-color: #fff;
+                border-radius: 6px;
+
+                h2 {
+                    margin: 0;
+                    font-size: large;
+                    letter-spacing: 1.1px;
+
+                }
+
+                .list {
+                    // padding-left: 12px;
+                    padding-top: 24px;
+
+                    .item {
+                        padding: 14px 10px;
+                        margin-bottom: 12px;
+                        transition: .3s;
+                        cursor: pointer;
+
+                        img {
+                            vertical-align: bottom;
+                            padding-right: 6px;
+                        }
+
+
+                    }
+
+                    .active {
+                        background-color: #f2f2f2;
+                        padding-left: 22px;
+                    }
+                }
+            }
+
+            .content {
+                padding: 26px 14px;
+                background-color: #fff;
+                border-radius: 6px;
+
+                h2 {
+                    margin: 0;
+                    font-size: large;
+                    letter-spacing: 1.1px;
+
+                }
+            }
+        }
+    }
+}
