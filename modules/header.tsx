@@ -9,7 +9,7 @@ const Header = () => {
                     <Row>
                         <Col>
                             <div>
-                                <span className='logo'>Uber Eats</span>
+                                <span className={style.logo}>Uber Eats</span>
                             </div>
                         </Col>
                     </Row>
