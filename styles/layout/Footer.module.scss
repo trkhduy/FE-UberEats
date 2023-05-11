@@ -1,0 +1,70 @@
+.footer {
+    background-color: #f7f9fb;
+    background-image: url('https://dev.foodotawp.com/wp-content/themes/foodota/libs/images/dots-new.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    // position: relative;
+
+    .container {
+        max-width: 100%;
+        padding: 50px 80px;
+
+        .footer_widget {
+
+            .logo {
+                color: #4C3D3D;
+                font-size: 30px;
+                font-weight: 500;
+                letter-spacing: 1.25px;
+                margin-bottom: 120px;
+            }
+
+            .dowloadApp img {
+                margin-right: 20px;
+            }
+        }
+
+        ul {
+            list-style: none;
+
+            li {
+                padding: 10px 0;
+
+                a {
+                    color: #4C3D3D;
+                    font-size: 1rem;
+                    font-weight: 500;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .moreInfoFooter {
+            border-top: 1px solid #dcd8d894;
+            padding-top: 35px;
+            margin-top: 20px;
+
+            .iconMedia {
+                font-size: 1.2rem;
+                margin: 0 7px;
+
+                a {
+                    color: #4C3D3D;
+                }
+            }
+
+            .policy {
+
+                a {
+                    color: #4C3D3D;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding-left: 40px;
+                }
+            }
+        }
+    }
+}
