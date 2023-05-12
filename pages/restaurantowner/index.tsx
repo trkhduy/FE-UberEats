@@ -4,6 +4,9 @@ import style from "../../styles/restaurant/restaurant.module.scss";
 import Menu from "@/components/restaurant_owner/listMenu";
 import clsx from "clsx";
 import { useState } from "react";
+import Order from "@/components/restaurant_owner/listOrder";
+import ProcessOrder from "@/components/restaurant_owner/listProcess";
+import Statictisc from "@/components/restaurant_owner/statictisc";
 
 function RestaurentOwner() {
 
@@ -60,7 +63,11 @@ function RestaurentOwner() {
                             </Col>
                             <Col flex="auto" >
                                 <div className={style.content}>
-                                    <Menu title='Menu' />
+                                    {!nav && <Menu title='Menu' />}
+                                    {nav === 'nav1' && <Order title="Order"></Order>}
+                                    {nav === 'nav2' && <ProcessOrder title="Process Order" />}
+                                    {nav === 'nav3' && <Statictisc title="Statictisc" />}
+
                                 </div>
                             </Col>
                         </Row>
