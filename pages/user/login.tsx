@@ -1,6 +1,7 @@
 import { MailOutlined, LockOutlined, GoogleOutlined, FacebookFilled } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import style from './style/login.module.scss'
+import Link from 'next/link';
 function Login() {
     const onFinish = (values: any) => {
         console.log('Received values of form: ', values);
@@ -26,7 +27,7 @@ function Login() {
                             name="password"
                             rules={[{ required: true, message: 'Please input your Password!' }]}
                         >
-                            <Input className={style.input_login}
+                            <Input.Password className={style.input_login}
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="Password"
@@ -37,14 +38,14 @@ function Login() {
                                 <Checkbox>Remember me</Checkbox>
                             </Form.Item>
 
-                            <a className="login-form-forgot" href="">
+                            <a className="login-form-forgot" href="#">
                                 Forgot password
                             </a>
                         </Form.Item>
 
                         <Form.Item>
                             <button className={style.btn_login}>Login</button>
-                            <span style={{ padding: '12px 10px', display: 'inline-block' }}> Or <a href="" style={{ color: "#4C3D3D", fontWeight: "500" }}>register now!</a></span>
+                            <span style={{ padding: '12px 10px', display: 'inline-block' }}> Or <Link href="/user/register" style={{ color: "#4C3D3D", fontWeight: "500" }}>register now!</Link></span>
                             <div className={style.social}><GoogleOutlined style={{ fontSize: '20px' }} /> Google</div>
                             <div className={style.social}><FacebookFilled style={{ fontSize: '20px' }} /> Facebook</div>
                         </Form.Item>
