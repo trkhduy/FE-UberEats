@@ -6,22 +6,49 @@
     .nav {
         padding: 15px 35px;
 
+        @media screen and (max-width:992px) {
+            padding: 15px 15px;
+        }
+
+        .bars_mobile {
+            display: none;
+
+            @media screen and (max-width:992px) {
+                display: block;
+            }
+        }
+
+        @media screen and (max-width:992px) {
+            .nav_mobile {
+                flex: 0 0 100% !important
+            }
+        }
+
+
         .logo {
             color: #fff;
             font-size: 30px;
             font-weight: 500;
             letter-spacing: 1.25px;
+
+            @media screen and (max-width:992px) {
+                font-size: 20px;
+            }
         }
 
         .login {
             padding: 10px 30px;
             margin: 0 5px;
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 500;
             border: 1px solid #f9db77;
             border-radius: 5px;
             transition: .25s;
             cursor: pointer;
+
+            @media screen and (max-width:1060px) {
+                padding: 8px 17px;
+            }
 
             &:hover {
                 border: 1px solid #fff;
@@ -40,63 +67,78 @@
             }
         }
 
-        .menuOptions {
-            list-style: none;
-            margin-right: 20px;
+        .login_mobile {
+            display: none;
 
-            li {
-                display: inline-block;
-                padding: 0 17px;
+            @media screen and (max-width: 992px) {
+                display: block;
+            }
+        }
 
-                a {
-                    color: #fff;
-                    font-size: 17px;
-                    font-weight: 600;
-                }
-
-                &:hover a {
-                    color: #FFD95A;
-                    transition: .25s;
-                }
+        .menu {
+            @media screen and (max-width: 992px) {
+                display: none;
             }
 
-            .selected a {
-                text-decoration: underline;
-                color: #FFD95A;
-            }
+            .menuOptions {
+                list-style: none;
+                margin-right: 20px;
 
-            .headerForm {
-                position: relative;
+                li {
+                    display: inline-block;
+                    padding: 0 17px;
 
-                .iconLocation {
-                    position: absolute;
-                    z-index: 10;
-                    top: 50%;
-                    left: 8%;
-                    transform: translateY(-50%);
-                    color: #FFD95A;
+                    a {
+                        color: #fff;
+                        font-size: 17px;
+                        font-weight: 600;
+                    }
 
-                    svg {
-                        height: 17px;
-                        width: 17px;
+                    &:hover a {
+                        color: #FFD95A;
+                        transition: .25s;
                     }
                 }
 
-                .selectForm {
-                    // span {
-                    //     text-align: center;
-                    // }
+                .selected a {
+                    text-decoration: underline;
+                    color: #FFD95A;
+                }
 
+                .headerForm {
+                    position: relative;
 
-                    &>div {
-                        padding-left: 22px;
+                    .iconLocation {
+                        position: absolute;
+                        z-index: 10;
+                        top: 50%;
+                        left: 8%;
+                        transform: translateY(-50%);
+                        color: #FFD95A;
+
+                        svg {
+                            height: 17px;
+                            width: 17px;
+                        }
                     }
 
-                    input {
-                        width: 90%;
+                    .selectForm {
+                        // span {
+                        //     text-align: center;
+                        // }
+
+
+                        &>div {
+                            padding-left: 22px;
+                        }
+
+                        input {
+                            width: 90%;
+                        }
                     }
                 }
             }
         }
+
     }
 }

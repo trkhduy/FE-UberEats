@@ -19,7 +19,11 @@ const ProcessOrder: FC<any> = ({ title }) => {
     const Header = (code: string, status: string, price: number) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
             <Col><h3 style={{ margin: "0" }}>{code}</h3></Col>
-            <Col><h3 style={{ margin: "0", fontWeight: "600", color: '#4C3D3D', padding: "2px 8px", borderRadius: "10px", backgroundColor: "#FFF7D4" }}>{status}</h3></Col>
+            <Col>
+                {/* <h3 style={{ margin: "0", fontWeight: "600", color: '#4C3D3D', padding: "2px 8px", borderRadius: "10px", backgroundColor: "#FFF7D4" }}> */}
+                <Button style={{ width: "100%", backgroundColor: false ? "greenyellow" : 'none' }} type='primary' disabled={true} >Order Successfuly</Button>
+                {/* </h3> */}
+            </Col>
             <Col><h3 style={{ margin: "0", color: "#59CE8F" }}>${price}</h3></Col>
         </Row>
     )

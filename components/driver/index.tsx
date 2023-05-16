@@ -5,7 +5,7 @@ import Map, { GeolocateControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useEffect, useRef, useState } from 'react';
-import { Button, Col, Collapse, Divider, Popconfirm, Row, Space, message } from 'antd';
+import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, message } from 'antd';
 import { EnvironmentOutlined } from '@ant-design/icons';
 
 
@@ -16,6 +16,9 @@ function DriverPage() {
     const [lng, setLng] = useState(-70.9);
     const [lat, setLat] = useState(42.35);
     const [zoom, setZoom] = useState(9);
+    const [acpOrder, setAcpOrder]: any = useState(null);
+
+
     const confirm = (e: any): void => {
         console.log(e);
         message.success('Click on Yes');
@@ -25,6 +28,12 @@ function DriverPage() {
         console.log(e);
         message.error('Click on No');
     };
+
+
+
+
+
+
     useEffect(() => {
         // if (map.current) return; // initialize map only once
         // map.current = new mapboxgl.Map({
@@ -33,7 +42,7 @@ function DriverPage() {
         //     center: [lng, lat],
         //     zoom: zoom
         // });
-    });
+    }, [acpOrder]);
     const Header = (code: string, price: number) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
             <Col><h3 style={{ margin: "0" }}>{code}</h3></Col>
@@ -70,29 +79,33 @@ function DriverPage() {
                 <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
             </Head>
             <div className={style.driver}>
-                <Row>
+                <Row justify={"center"}>
 
-                    <Col md={12} span={24}>
-                        <div className={style.map} style={{ width: "100%", maxWidth: "1440px", aspectRatio: '13/9' }} >
+                    <Col md={12} sm={24} span={24}>
+                        <div className={style.map} style={{ width: "100%", maxWidth: "1440px", aspectRatio: acpOrder && (window.innerWidth <= 768) ? '9/16' : '16/9' }} >
                             <Map
+                                style={{ width: '100%', height: '100%' }}
                                 mapboxAccessToken="pk.eyJ1IjoidHJpZGMiLCJhIjoiY2xobm4xdXh3MW16azNnbHJvcHRwYmRodiJ9.WK8ZUq8s5DqkBdqzj20a6Q"
                                 initialViewState={{
-                                    longitude: -100,
-                                    latitude: 40,
-                                    zoom: 3.5,
+                                    longitude: 107.4204107,
+                                    latitude: 19.8434013,
+                                    zoom: 4.84,
                                 }}
                                 mapStyle="mapbox://styles/tridc/clhnnergm01p401pr3eulbcaa"
                             >
                                 <GeolocateControl
-                                    positionOptions={{ enableHighAccuracy: true }}
+                                    // positionOptions={{ enableHighAccuracy: true }}
                                     trackUserLocation={true}
                                 />
                             </Map>
                         </div>
+                        {acpOrder && < div >
+                            <Button style={{ width: "100%", margin: "10px 0", backgroundColor: false ? "greenyellow" : 'none' }} type='primary' disabled={true} >Order Successfuly</Button>
+                        </div>}
                     </Col>
-                    <Col md={12} span={24} >
+                    <Col md={!acpOrder ? 12 : 24} sm={24} span={24} >
                         <div className={style.listOrder}>
-                            <h2>List Order</h2>
+                            {!acpOrder && <h2>List Order</h2>}
                             <div className={style.list}>
                                 <Space direction="vertical" style={{ width: '100%' }}>
 
@@ -138,8 +151,7 @@ function DriverPage() {
                                         >
                                             <Button type="primary" danger>Deny</Button>
                                         </Popconfirm> */}
-                                                <Button type="primary" style={{ backgroundColor: "#ABC270", color: "#Fff", marginLeft: "12px" }} >Accept</Button>
-
+                                                {!acpOrder && <Button type="primary" style={{ backgroundColor: "#ABC270", color: "#Fff", marginLeft: "12px" }} onClick={() => { setAcpOrder(true), window.scrollTo({ top: 60, behavior: 'smooth' }) }} >Accept</Button>}
                                             </div>
                                         </Panel>
 
@@ -153,9 +165,7 @@ function DriverPage() {
                     </Col>
                 </Row>
 
-
-
-            </div>
+            </div >
         </>
     );
 }

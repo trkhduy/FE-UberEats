@@ -19,6 +19,16 @@
         .list {
             padding: 30px 12px;
 
+            @media screen and (max-width:"769px") {
+                padding: 12px 4px;
+            }
+
+            h2 {
+                @media screen and (max-width:"769px") {
+                    font-size: smaller;
+                }
+            }
+
             .item {
                 width: 100%;
 
@@ -97,9 +107,11 @@
     }
 
     .map {
-        @media screen and (max-width:"768px") {
-            height: 50vh;
-        }
+        margin: 0 auto;
+        // @media screen and (max-width:"768px") {
+        //     height: 50vh;
+        // }
+        max-height: calc(100vh - 100px);
     }
 
 }
