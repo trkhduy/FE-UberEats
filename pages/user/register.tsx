@@ -1,9 +1,12 @@
 import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, Select } from 'antd';
 import style from './style/login.module.scss'
 function Login() {
     const onFinish = (values: any) => {
         console.log('Received values of form: ', values);
+    };
+    const handleChange = (value: string) => {
+        console.log(`selected ${value}`);
     };
     return (
         <>
@@ -29,6 +32,25 @@ function Login() {
                             <Input className={style.input_login} prefix={<PhoneOutlined style={{ transform: 'translate(rotage(90deg))' }} className="site-form-item-icon" />} placeholder="Phone" />
                         </Form.Item>
                         <Form.Item
+                            name="role"
+                            label="Role"
+                        // rules={[{ required: true, message: 'Please input your Pho!' }]}
+                        >
+                            <Select
+                                labelInValue
+                                className={style.select}
+                                defaultValue="3"
+                                style={{ width: '50%', minWidth: "200px", backgroundColor: "transparent !important" }}
+                                onChange={handleChange}
+                                options={[
+                                    { value: '1', label: 'Driver' },
+                                    { value: '2', label: 'Restaurent' },
+                                    { value: '3', label: 'Client' },
+
+                                ]}
+                            />
+                        </Form.Item>
+                        <Form.Item
                             name="email"
                             rules={[{ required: true, message: 'Please input your email!' }]}
                         >
@@ -38,7 +60,7 @@ function Login() {
                             name="password"
                             rules={[{ required: true, message: 'Please input your Password!' }]}
                         >
-                            <Input className={style.input_login}
+                            <Input.Password className={style.input_login}
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="Password"
@@ -49,7 +71,7 @@ function Login() {
 
                             rules={[{ required: true, message: 'Please input your Confirm Password!' }]}
                         >
-                            <Input className={style.input_login}
+                            <Input.Password className={style.input_login}
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="Confirm Password"
