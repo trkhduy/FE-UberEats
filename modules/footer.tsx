@@ -9,7 +9,7 @@ const Footer = () => {
             <footer className={style.footer}>
                 <div className={style.container}>
                     <Row>
-                        <Col span={12}>
+                        <Col xl={12} md={24}>
                             <div className={style.footer_widget}>
                                 <div className={style.logo} >
                                     <div >
@@ -30,7 +30,7 @@ const Footer = () => {
                                 </div>
                             </div>
                         </Col>
-                        <Col span={6}>
+                        <Col xl={6} md={24}>
                             <ul>
                                 <li>
                                     <Link href={''}>
@@ -59,7 +59,7 @@ const Footer = () => {
                                 </li>
                             </ul>
                         </Col>
-                        <Col span={6}>
+                        <Col xl={6} md={24}>
                             <ul>
                                 <li>
                                     <Link href={''}>
@@ -91,7 +91,7 @@ const Footer = () => {
                     </Row>
                     <div className={style.moreInfoFooter}>
                         <Row>
-                            <Col span={12}>
+                            <Col xl={12} md={24}>
                                 <Row>
                                     <Col className={style.iconMedia}>
                                         <Link href={''}>
@@ -110,7 +110,7 @@ const Footer = () => {
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col span={12}>
+                            <Col xl={12} md={24}>
                                 <Row align={'middle'} justify={'end'} className={style.policy}>
                                     <Col>
                                         <Link href={''}>Privacy Policy</Link>
@@ -127,10 +127,10 @@ const Footer = () => {
                                 </Row>
                             </Col>
                         </Row>
-                        <Row style={{ marginTop: '20px' }} >
-                            <Col span={8}></Col>
-                            <Col span={16}>
-                                <Row align={'middle'} justify={'end'}>
+                        <Row style={{ marginTop: '20px' }} className={style.footerInfor}>
+                            <Col xl={8} className={style.left_footer}></Col>
+                            <Col xl={16} md={24}>
+                                <Row align={'middle'} justify={'end'} className={style.content_footer}>
                                     <Col>
                                         <span style={{ fontSize: '15px', marginRight: '25px' }}>
                                             This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.

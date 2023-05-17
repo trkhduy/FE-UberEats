@@ -98,7 +98,7 @@ function HomeClient(): any {
                     </div>
                     <div className={style.item_top_res}>
                         <Row>
-                            <Col span={8} style={{ padding: "0 20px", marginBottom: "35px" }}>
+                            <Col span={6} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                 <div className={style.card_item}>
                                     <div className={style.img_item}>
                                         <Link href={''}>
@@ -149,7 +149,7 @@ function HomeClient(): any {
                     </div>
                     <div className={style.item_top_res}>
                         <Row>
-                            <Col span={8} style={{ padding: "0 20px", marginBottom: "35px" }}>
+                            <Col span={6} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                 <div className={style.card_item}>
                                     <div className={style.img_item}>
                                         <Link href={''}>
