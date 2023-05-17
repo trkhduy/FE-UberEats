@@ -10,7 +10,14 @@
         max-width: 100%;
         padding: 50px 80px;
 
+        @media screen and (max-width:992px) {
+            padding: 50px 40px;
+        }
+
         .footer_widget {
+            @media screen and (max-width:1200px) {
+                margin-bottom: 50px;
+            }
 
             .logo {
                 color: #4C3D3D;
@@ -18,6 +25,10 @@
                 font-weight: 500;
                 letter-spacing: 1.25px;
                 margin-bottom: 120px;
+
+                @media screen and (max-width:1200px) {
+                    margin-bottom: 50px;
+                }
             }
 
             .dowloadApp img {
@@ -27,6 +38,11 @@
 
         ul {
             list-style: none;
+
+            @media screen and (max-width:1200px) {
+                margin-bottom: 50px;
+                margin-left: 0;
+            }
 
             li {
                 padding: 10px 0;
@@ -38,6 +54,10 @@
 
                     &:hover {
                         text-decoration: underline;
+                    }
+
+                    @media screen and (max-width:1200px) {
+                        font-size: 1.3rem;
                     }
                 }
             }
@@ -58,14 +78,39 @@
             }
 
             .policy {
+                @media screen and (max-width:1200px) {
+                    justify-content: start !important;
+                    margin-top: 20px;
+                }
 
                 a {
                     color: #4C3D3D;
                     font-size: 15px;
                     font-weight: 500;
                     padding-left: 40px;
+
+                    @media screen and (max-width:1200px) {
+                        padding: 0 50px 0 0;
+                    }
                 }
             }
+
+            .footerInfor {
+
+                .left_footer {
+
+                    @media screen and (max-width:1200px) {
+                        display: none;
+                    }
+                }
+
+                .content_footer {
+                    @media screen and (max-width:1200px) {
+                        justify-content: flex-start  !important;
+                    }
+                }
+            }
+
         }
     }
 }
