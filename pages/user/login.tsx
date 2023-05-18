@@ -1,9 +1,15 @@
 import { MailOutlined, LockOutlined, GoogleOutlined, FacebookFilled } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, message } from 'antd';
 import style from './style/login.module.scss'
 import Link from 'next/link';
+import UserService from '@/service/userService';
 function Login() {
-    const onFinish = (values: any) => {
+    const userService = new UserService
+    const onFinish = async (values: any) => {
+        console.log(
+            await userService.login(values)
+
+        );
         console.log('Received values of form: ', values);
     };
     return (
@@ -19,7 +25,7 @@ function Login() {
                     >
                         <Form.Item
                             name="email"
-                            rules={[{ required: true, message: 'Please input your email!' }]}
+                            rules={[{ required: true, message: 'Please input your email!' }, { type: 'email', message: "Email is invalite" }]}
                         >
                             <Input className={style.input_login} prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
@@ -34,7 +40,8 @@ function Login() {
                             />
                         </Form.Item>
                         <Form.Item>
-                            <Form.Item name="remember" valuePropName="checked" noStyle>
+                            <Form.Item
+                                valuePropName="checked" noStyle>
                                 <Checkbox>Remember me</Checkbox>
                             </Form.Item>
 

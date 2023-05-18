@@ -1,9 +1,40 @@
 import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Select } from 'antd';
+import { Button, Checkbox, Form, Input, Select, message } from 'antd';
 import style from './style/login.module.scss'
-function Login() {
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
+import UserService from '@/service/userService';
+import { useRouter } from 'next/router';
+// import { Option } from 'antd/es/mentions';
+const { Option } = Select;
+function Register() {
+    const userService = new UserService
+
+    const [messageApi, contextHolder] = message.useMessage()
+    const router = useRouter()
+
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: 'Register Successfuly !',
+        });
+    };
+    const error = () => {
+        messageApi.open({
+            type: 'error',
+            content: 'Error! An error occurred. Please try again later !',
+        });
+    };
+
+    const onFinish = async (values: any) => {
+        delete values.confirmPassword
+        !values.role && (values.role = 1)
+        const [data, err] = await userService.register(values)
+        if (data) {
+            success()
+            return router.push('/user/login')
+        }
+        return err()
+
+        // console.log('Received values of form: ', values);
     };
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
@@ -20,39 +51,48 @@ function Login() {
                         onFinish={onFinish}
                     >
                         <Form.Item
-                            name="username"
+                            name="name"
                             rules={[{ required: true, message: 'Please input your Username!' }]}
                         >
                             <Input className={style.input_login} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
                         </Form.Item>
                         <Form.Item
                             name="phone"
-                            rules={[{ required: true, message: 'Please input your Phone Number!' }]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your phone number!",
+                                },
+                                {
+                                    pattern: /^((\+84)|0)(9[0-9]{8}|3[2-9]{1}[0-9]{7})$/,
+                                    message: "Please input VN phone number!",
+                                },
+                                {
+
+                                }
+                            ]}
                         >
                             <Input className={style.input_login} prefix={<PhoneOutlined style={{ transform: 'translate(rotage(90deg))' }} className="site-form-item-icon" />} placeholder="Phone" />
                         </Form.Item>
                         <Form.Item
                             name="role"
                             label="Role"
-                        // rules={[{ required: true, message: 'Please input your Pho!' }]}
                         >
                             <Select
-                                labelInValue
+                                // labelInValue
                                 className={style.select}
-                                defaultValue="3"
+                                defaultValue="1"
                                 style={{ width: '50%', minWidth: "200px", backgroundColor: "transparent !important" }}
                                 onChange={handleChange}
-                                options={[
-                                    { value: '1', label: 'Driver' },
-                                    { value: '2', label: 'Restaurent' },
-                                    { value: '3', label: 'Client' },
-
-                                ]}
-                            />
+                            >
+                                <Option value="2">Driver</Option>
+                                <Option value="3">Restautant</Option>
+                                <Option value="1">Client</Option>
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name="email"
-                            rules={[{ required: true, message: 'Please input your email!' }]}
+                            rules={[{ required: true, message: 'Please input your email!' }, { type: "email", message: 'Emmail Invatid' }]}
                         >
                             <Input className={style.input_login} prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
@@ -67,9 +107,22 @@ function Login() {
                             />
                         </Form.Item>
                         <Form.Item
-                            name=""
+                            name={'confirmPassword'}
+                            dependencies={['password']}
 
-                            rules={[{ required: true, message: 'Please input your Confirm Password!' }]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please confirm your password!',
+                                },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                    },
+                                }),]}
                         >
                             <Input.Password className={style.input_login}
                                 prefix={<LockOutlined className="site-form-item-icon" />}
@@ -94,4 +147,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;
