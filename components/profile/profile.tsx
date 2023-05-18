@@ -22,7 +22,7 @@ const beforeUpload = (file: RcFile) => {
     }
     return false;
 };
-const Profile: FC<any> = ({ title }) => {
+const Profile: FC<any> = ({ title = 'Your profile' }) => {
     const [disabled, setDisabled] = useState(true)
 
     const onFinish = (values: any) => {
