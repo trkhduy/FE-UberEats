@@ -54,7 +54,7 @@ const Header = () => {
                                         <Col>
                                             <div style={{ background: '#FFD95A', borderRadius: '25px', padding: '3px 10px', height: "25px", textAlign: 'center' }}>
                                                 <Link href={''}>
-                                                    <span style={{ lineHeight: '25px', color: '#4D3C3C', fontWeight: '500' }}>Sign up</span>
+                                                    <span style={{ lineHeight: '20px', color: '#4D3C3C', fontWeight: '500' }}>Sign up</span>
                                                 </Link>
                                             </div>
                                         </Col>
