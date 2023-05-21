@@ -1,6 +1,10 @@
 .main_shop {
     font-family: 'Poppins', sans-serif;
 
+    a {
+        text-decoration: none;
+    }
+
     .banner {
         background-image: url(https://cdn.shopify.com/s/files/1/0301/5648/8842/files/breadcrumb.jpg?v=1579081409);
         background-size: cover;

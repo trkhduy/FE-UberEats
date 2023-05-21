@@ -155,12 +155,12 @@ const Index = () => {
                                     <Col className={style.item} xl={8} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 10px", marginBottom: "35px" }}>
                                         <div className={style.card_item}>
                                             <div className={style.img_item}>
-                                                <Link href={''}>
+                                                <Link href={''} style={{ textDecoration: 'none' }}>
                                                     <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/01-1-1.png" alt="" />
                                                 </Link>
                                             </div>
                                             <div className={style.content_item}>
-                                                <Link href={''}>
+                                                <Link href={''} style={{ textDecoration: 'none' }}>
                                                     <h3>Organic Acardian Food</h3>
                                                 </Link>
                                                 <div className={style.price_item}>
@@ -170,7 +170,7 @@ const Index = () => {
                                                         <span className={style.sale_price}>$70</span>
                                                     </div>
                                                     <div className={style.cart_plus}>
-                                                        <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                        <Link href={''} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
                                                             <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                         </Link>
                                                     </div>
