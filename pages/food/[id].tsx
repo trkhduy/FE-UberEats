@@ -24,7 +24,7 @@ const DetailProduct = () => {
                             <Col xl={12} md={12} sm={24}>
                                 <div className={style.content_detail}>
                                     <div className={style.pro_cate}>
-                                        <span className={style.category}>FastFood/Chicken</span> - <span><Link href={''} style={{ color: '#187caa' }}>Branches</Link></span>
+                                        <span className={style.category}>FastFood/Chicken</span> - <span><Link href={''} style={{ color: '#187caa', textDecoration: 'none' }}>Branches</Link></span>
                                     </div>
                                     <h2 style={{ margin: '20px 0', fontWeight: '700', fontSize: '26px', color: '#464646', letterSpacing: '1.1px' }}>Tasty Food Pizza</h2>
                                     <p style={{ color: "#252525", margin: '20px 0', }}>8 Ng. 66 Đ. Hồ Tùng Mậu, P. Mai Dịch, Cầu Giấy, Hà Nội</p>
@@ -43,7 +43,7 @@ const DetailProduct = () => {
                                         <InputNumber style={{ borderRadius: '0', marginLeft: '15px' }} min={1} max={100} defaultValue={1} onChange={changeQuantity} />
                                     </div>
                                     <div className={style.addToCart} style={{ margin: '60px 0' }}>
-                                        <Link href={''} >
+                                        <Link href={''} style={{ textDecoration: 'none' }} >
                                             Add To Cart
                                         </Link>
                                     </div>
@@ -65,7 +65,7 @@ const DetailProduct = () => {
                                                     </Link>
                                                 </div>
                                                 <div className={style.content_item}>
-                                                    <Link href={''}>
+                                                    <Link href={''} style={{ textDecoration: 'none' }}>
                                                         <h3>Organic Acardian Food</h3>
                                                     </Link>
                                                     <div className={style.price_item}>
@@ -75,7 +75,7 @@ const DetailProduct = () => {
                                                             <span className={style.sale_price}>$70</span>
                                                         </div>
                                                         <div className={style.cart_plus}>
-                                                            <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                            <Link href={''} style={{ color: '#4D3C3C', textDecoration: 'none' }}>
                                                                 <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                             </Link>
                                                         </div>
@@ -106,7 +106,7 @@ const DetailProduct = () => {
                                                     </Link>
                                                 </div>
                                                 <div className={style.content_item}>
-                                                    <Link href={''}>
+                                                    <Link href={''} style={{ textDecoration: 'none' }}>
                                                         <h3>Organic Acardian Food</h3>
                                                     </Link>
                                                     <div className={style.price_item}>
@@ -116,7 +116,7 @@ const DetailProduct = () => {
                                                             <span className={style.sale_price}>$70</span>
                                                         </div>
                                                         <div className={style.cart_plus}>
-                                                            <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                            <Link href={''} style={{ color: '#4D3C3C', textDecoration: 'none' }}>
                                                                 <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                             </Link>
                                                         </div>
@@ -147,7 +147,7 @@ const DetailProduct = () => {
                                                     </Link>
                                                 </div>
                                                 <div className={style.content_item}>
-                                                    <Link href={''}>
+                                                    <Link href={''} style={{ textDecoration: 'none' }}>
                                                         <h3>Organic Acardian Food</h3>
                                                     </Link>
                                                     <div className={style.price_item}>
@@ -157,7 +157,7 @@ const DetailProduct = () => {
                                                             <span className={style.sale_price}>$70</span>
                                                         </div>
                                                         <div className={style.cart_plus}>
-                                                            <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                            <Link href={''} style={{ color: '#4D3C3C', textDecoration: 'none' }}>
                                                                 <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                             </Link>
                                                         </div>
