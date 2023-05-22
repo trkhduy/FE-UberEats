@@ -92,22 +92,30 @@ const Index = () => {
                                                 <RightOutlined style={{ fontSize: '12px', transition: "0.3s", transform: collapse2 ? "rotate(90deg)" : 'rotate(0)' }} />
                                             </div>
                                             {collapse2 &&
-                                                <Row gutter={[10, 0]} style={{ marginTop: '20px' }}>
-                                                    <Col span={12}>
-                                                        <Form.Item
-                                                            name="lowPrice"
-                                                        >
-                                                            <Input placeholder='Min price' />
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col span={12}>
-                                                        <Form.Item
-                                                            name="highPrice"
-                                                        >
-                                                            <Input placeholder='Max price' />
-                                                        </Form.Item>
-                                                    </Col>
-                                                </Row>
+                                                <div>
+                                                    <Row gutter={[10, 0]} style={{ marginTop: '20px' }}>
+                                                        <Col span={12}>
+                                                            <Form.Item
+                                                                name="lowPrice"
+                                                            >
+                                                                <Input placeholder='Min price' />
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col span={12}>
+                                                            <Form.Item
+                                                                name="highPrice"
+                                                            >
+                                                                <Input placeholder='Max price' />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Form.Item style={{ textAlign: 'end' }}>
+                                                        <Button type="default" htmlType="submit" style={{ borderRadius: "0" }}>
+                                                            Submit
+                                                        </Button>
+                                                    </Form.Item>
+                                                </div>
+
                                             }
                                         </div>
                                     </div>
@@ -129,11 +137,7 @@ const Index = () => {
                                             }
                                         </div>
                                     </div>
-                                    <Form.Item style={{ textAlign: 'end' }}>
-                                        <Button type="default" htmlType="submit" style={{ borderRadius: "0" }}>
-                                            Submit
-                                        </Button>
-                                    </Form.Item>
+
 
                                 </Form>
 
