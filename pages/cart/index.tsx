@@ -4,6 +4,7 @@ import clsx from 'clsx';
 // import IpNumber from '../../../component/inputNumber/ipNumber';
 import style from './style/cart.module.scss'
 import C_product from '@/components/carousel_product/c_product';
+import Link from 'next/link';
 function Cart() {
     function quantity(action: any, index: any) {
         const id: any = document.getElementById('ip_number' + index)
@@ -120,7 +121,9 @@ function Cart() {
                                 <span style={{ textTransform: "uppercase" }}>TOTAL</span>
                                 <b>$189.00</b>
                             </div>
-                            <a id="" className={clsx(style.btn_checkout, 'btn')} href="#" role="button">Process To Checkout</a>
+                            <Link href={'/checkout'} className={clsx(style.btn_checkout, 'btn')}>
+                                Process To Checkout
+                            </Link>
                         </div>
                     </Col>
                 </Row>
