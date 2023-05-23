@@ -48,6 +48,18 @@
                 display: flex;
                 align-items: center;
 
+
+                button {
+                    margin-left: 10px;
+                    height: 54px;
+                    background-color: #4C3D3D;
+
+                    &:hover {
+                        border: 0;
+                        border-left: 4px solid #000;
+                        border-top: 4px solid #000;
+                    }
+
                 @media screen and (max-width:992px) {
                     display: block;
                 }

@@ -35,7 +35,19 @@ function HomeClient(): any {
                                 placeholder="Enter the dish or restaurant name you want to search for"
                                 prefix={<SearchOutlined className="site-form-item-icon" style={{ fontSize: "20px", marginRight: "13px" }} />}
                             />
-                            <Button style={{ marginLeft: '15px', padding: "12px 20px", height: "53.6px !important", backgroundColor: '#000 !important', color: '#fff', fontSize: '1rem', fontWeight: '600' }}>Find Food</Button>
+                            <button style={{
+                                marginLeft: '15px',
+                                padding: "12px 20px",
+                                width: "150px",
+                                height: "53.6px !important",
+                                backgroundColor: '#000 !important',
+                                color: '#fff',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                                // margin: '0'
+
+                            }}>Find Food</button>
                         </div>
                         <div className={style.restaurant_popular}>
                             <h2>Popular Restaurant</h2>
