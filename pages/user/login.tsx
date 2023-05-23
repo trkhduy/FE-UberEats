@@ -3,17 +3,50 @@ import { Button, Checkbox, Form, Input, message } from 'antd';
 import style from './style/login.module.scss'
 import Link from 'next/link';
 import UserService from '@/service/userService';
-function Login() {
-    const userService = new UserService
-    const onFinish = async (values: any) => {
-        console.log(
-            await userService.login(values)
+import axiosClient from '@/service/config/axiosInstance';
+import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
+import { useRouter } from 'next/router';
+import { log } from 'console';
 
-        );
-        console.log('Received values of form: ', values);
+function Login() {
+    const router = useRouter()
+    const userService = new UserService
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: 'Login successfuly !',
+        });
+    };
+    const error = (title: string) => {
+        messageApi.open({
+            type: 'error',
+            content: title,
+        });
+    };
+
+    const onFinish = async (values: any) => {
+        let [res, err]: any = await userService.login(values)
+        if (res && !err) {
+            setCookies('access_token', res.data.token.access_token as string);
+            setCookies('refresh_token', res.data.token.refresh_token as string, { maxAge: 31556926 });
+            success()
+            setTimeout(() => {
+                router.push('/')
+
+            }, 1000)
+        } else {
+            console.log(err);
+
+            error(err.response.data.message)
+        }
+        // console.log('Received values of form: ', values);
     };
     return (
         <>
+            {contextHolder}
             <div className={style.bg}>
                 <div className={style.login}>
                     <h1>Login</h1>
