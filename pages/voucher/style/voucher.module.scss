@@ -1,0 +1,129 @@
+.main_voucher {
+
+    .banner {
+        background-image: url(https://cdn.shopify.com/s/files/1/0301/5648/8842/files/breadcrumb.jpg?v=1579081409);
+        background-size: cover;
+        background-position: center;
+        padding: 80px 0;
+        text-align: center;
+        background-repeat: no-repeat;
+        ;
+
+        h2 {
+            font-size: 40px;
+            color: #faf7e9;
+        }
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 80px;
+
+        @media screen and (max-width:1200px) {
+            padding: 80px 70px;
+        }
+
+        @media screen and (max-width:868px) {
+            padding: 80px 50px;
+        }
+
+        @media screen and (max-width:768px) {
+            padding: 80px 20px;
+        }
+
+        .voucher_content {
+            border: 1px solid #cccaca;
+            padding: 15px;
+
+            .filter_content {
+
+                .inputSearch>span span {
+                    border-radius: 0 !important;
+
+                    button {
+                        border-radius: 0 !important;
+                        height: 31px;
+
+                        @media screen and (max-width:992px) {
+                            height: 31.6px;
+                        }
+                    }
+
+                }
+            }
+
+            .filterBy {
+                margin-left: 15px;
+                width: 180px;
+
+                @media screen and (max-width:768px) {
+                    width: 130px;
+                }
+
+                @media screen and (max-width:576.5px) {
+                    margin-top: 20px;
+                    margin-left: 0;
+                    width: 100%;
+                }
+
+                div {
+                    border-radius: 0;
+                }
+            }
+
+
+            .sort {
+                display: flex;
+                justify-content: flex-end;
+
+
+                .sortBy {
+                    width: 180px;
+
+                    @media screen and (max-width:768px) {
+                        width: 130px;
+                    }
+
+                    @media screen and (max-width:576px) {
+                        margin-top: 20px;
+                        width: 100%;
+                    }
+
+                    div {
+                        border-radius: 0;
+                    }
+                }
+            }
+
+        }
+
+        .voucher_items {
+            margin-top: 25px;
+
+            .voucher_item {
+
+                h3 {
+                    font-size: 22px;
+                    color: #4C3D3D;
+                    margin-bottom: 30px;
+                }
+
+                .card_item {
+                    border: 1px solid #d8d8d8;
+
+                    .img_item {
+
+                        img {
+                            width: 100%;
+                        }
+                    }
+
+                    .content_item {
+                        padding: 0 10px;
+                    }
+                }
+            }
+        }
+
+    }
+}
