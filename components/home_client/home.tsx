@@ -1,15 +1,24 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './style/home.module.scss'
 import { Button, Col, Input, Row, Tooltip } from 'antd'
-import { ClockCircleFilled, SearchOutlined, StarFilled } from '@ant-design/icons'
+import { ClockCircleFilled, SearchOutlined, ShoppingCartOutlined, StarFilled } from '@ant-design/icons'
 import Link from 'next/link'
 
-const btnProps = {
-    style: {
-        width: 70,
-    },
-};
+
 function HomeClient(): any {
+    const [width, setWidth] = useState(0)
+
+    const handleWindowResize = () => {
+        setWidth(window.innerWidth);
+    }
+
+    useEffect(() => {
+        // component is mounted and window is available
+        handleWindowResize();
+        window.addEventListener('resize', handleWindowResize);
+        // unsubscribe from the event on component unmount
+        return () => window.removeEventListener('resize', handleWindowResize);
+    }, []);
 
     return (
         <>
@@ -110,7 +119,7 @@ function HomeClient(): any {
                     </div>
                     <div className={style.item_top_res}>
                         <Row>
-                            <Col span={6} style={{ padding: "0 20px", marginBottom: "35px" }}>
+                            <Col xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                 <div className={style.card_item}>
                                     <div className={style.img_item}>
                                         <Link href={''}>
@@ -122,9 +131,16 @@ function HomeClient(): any {
                                             <h3>Organic Acardian Food</h3>
                                         </Link>
                                         <div className={style.price_item}>
-                                            <span className={style.cur_price}>$100</span>
-                                            <div className={style.dash}></div>
-                                            <span className={style.sale_price}>$70</span>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <span className={style.cur_price}>$100</span>
+                                                <div className={style.dash}></div>
+                                                <span className={style.sale_price}>$70</span>
+                                            </div>
+                                            <div className={style.cart_plus}>
+                                                <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                    <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                </Link>
+                                            </div>
                                         </div>
                                         <div className={style.res_info}>
                                             <div className={style.img_res}>
@@ -161,7 +177,7 @@ function HomeClient(): any {
                     </div>
                     <div className={style.item_top_res}>
                         <Row>
-                            <Col span={6} style={{ padding: "0 20px", marginBottom: "35px" }}>
+                            <Col xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                 <div className={style.card_item}>
                                     <div className={style.img_item}>
                                         <Link href={''}>
@@ -185,9 +201,16 @@ function HomeClient(): any {
                                             <h3>Organic Acardian Food</h3>
                                         </Link>
                                         <div className={style.price_item}>
-                                            <span className={style.cur_price}>$100</span>
-                                            <div className={style.dash}></div>
-                                            <span className={style.sale_price}>$70</span>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <span className={style.cur_price}>$100</span>
+                                                <div className={style.dash}></div>
+                                                <span className={style.sale_price}>$70</span>
+                                            </div>
+                                            <div className={style.cart_plus}>
+                                                <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                    <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                </Link>
+                                            </div>
                                         </div>
                                         <div className={style.res_info}>
                                             <div className={style.img_res}>
@@ -212,7 +235,7 @@ function HomeClient(): any {
                 </div>
                 <div className={style.feat_home}>
                     <Row>
-                        <Col span={8}>
+                        <Col xl={8} md={24} sm={24} xs={24}>
                             <div className={style.card_feat} style={{ padding: '0 15px' }}>
                                 <div className={style.img_feat}>
                                     <img src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/dd109bb1f7572eed.png" alt="" />
@@ -225,7 +248,7 @@ function HomeClient(): any {
                                 </Link>
                             </div>
                         </Col>
-                        <Col span={8}>
+                        <Col xl={8} md={24} sm={24} xs={24}>
                             <div className={style.card_feat} style={{ padding: '0 15px' }}>
                                 <div className={style.img_feat}>
                                     <img src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/8148ef38ec4096b7.png" alt="" />
@@ -238,7 +261,7 @@ function HomeClient(): any {
                                 </Link>
                             </div>
                         </Col>
-                        <Col span={8}>
+                        <Col xl={8} md={24} sm={24} xs={24}>
                             <div className={style.card_feat} style={{ padding: '0 15px' }}>
                                 <div className={style.img_feat}>
                                     <img src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/7a9d4feba62d2c0b.png" alt="" />

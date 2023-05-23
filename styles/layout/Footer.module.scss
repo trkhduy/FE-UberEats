@@ -6,6 +6,10 @@
     font-family: 'Poppins', sans-serif;
     margin-top: 100px;
 
+    a {
+        text-decoration: none;
+    }
+
     .container {
         max-width: 100%;
         padding: 50px 80px;
@@ -106,7 +110,7 @@
 
                 .content_footer {
                     @media screen and (max-width:1200px) {
-                        justify-content: flex-start  !important;
+                        justify-content: flex-start !important;
                     }
                 }
             }

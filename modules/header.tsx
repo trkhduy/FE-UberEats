@@ -45,7 +45,7 @@ const Header = () => {
                                 <Col className={style.login_mobile}>
                                     <Row align="middle" >
                                         <Col>
-                                            <Link href={''}>
+                                            <Link href={'/user/login'}>
                                                 <div style={{ background: '#fff', borderRadius: '25px', width: '30px', height: "25px", textAlign: 'center', marginRight: '5px' }}>
                                                     <UserOutlined style={{ lineHeight: '25px', color: '#4D3C3C' }} />
                                                 </div>
@@ -53,8 +53,9 @@ const Header = () => {
                                         </Col>
                                         <Col>
                                             <div style={{ background: '#FFD95A', borderRadius: '25px', padding: '3px 10px', textAlign: 'center' }}>
-                                                <Link href={''}>
+                                                <Link href={'/user/register'}>
                                                     <span style={{ color: '#4D3C3C', fontWeight: '500', margin: '0' }}>Sign up</span>
+
                                                 </Link>
                                             </div>
                                         </Col>
@@ -67,7 +68,7 @@ const Header = () => {
                                 <Col>
                                     <ul className={style.menuOptions}>
                                         <li className={clsx([style.option])}><Link href={''}>Restaurant</Link></li>
-                                        <li className={style.option}><Link href={''}>Food</Link></li>
+                                        <li className={style.option}><Link href={'/food'}>Food</Link></li>
                                         <li className={style.option}><Link href={''}>Voucher</Link></li>
                                         <li className={style.headerForm}>
                                             <div className={style.iconLocation}>
@@ -125,7 +126,7 @@ const Header = () => {
                         </Link>
                     </li>
                     <li style={{ padding: '13px 5px', borderBottom: '1px solid #d8d8d8' }}>
-                        <Link href={''} style={{ fontSize: '22px', fontWeight: '600', color: '#000' }}>
+                        <Link href={'/food'} style={{ fontSize: '22px', fontWeight: '600', color: '#000' }}>
                             Food
                         </Link>
                     </li>
