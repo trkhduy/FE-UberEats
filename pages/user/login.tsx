@@ -7,6 +7,7 @@ import axiosClient from '@/service/config/axiosInstance';
 import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { log } from 'console';
+import jwtDecode from 'jwt-decode';
 
 function Login() {
     const router = useRouter()
@@ -34,7 +35,10 @@ function Login() {
             setCookies('refresh_token', res.data.token.refresh_token as string, { maxAge: 31556926 });
             success()
             setTimeout(() => {
-                router.push('/')
+                let { role }: { role: number } = jwtDecode(res.data.token.access_token as string)
+                role === 1 && router.push('/')
+                role === 2 && router.push('/driver')
+                role === 3 && router.push('/restaurantowner')
 
             }, 1000)
         } else {
