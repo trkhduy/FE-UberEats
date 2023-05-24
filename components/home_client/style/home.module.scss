@@ -22,7 +22,7 @@
             max-width: 60%;
 
             @media screen and (max-width:992px) {
-                width: 80%;
+                width: 60%;
                 left: 50%;
                 transform: translateX(-50%);
                 max-width: 90%;
@@ -48,6 +48,9 @@
                 display: flex;
                 align-items: center;
 
+                @media screen and (max-width:992px) {
+                    display: block;
+                }
 
                 button {
                     margin-left: 10px;
@@ -60,18 +63,11 @@
                         border-top: 4px solid #000;
                     }
 
-                @media screen and (max-width:992px) {
-                    display: block;
-                }
-
-                button {
-
                     @media screen and (max-width:992px) {
-                        width: 100%;
+                        width: 100% !important;
                         margin-left: 0 !important;
                         margin-top: 20px;
                     }
-
                 }
             }
 
@@ -518,4 +514,5 @@
             margin-top: 10px;
         }
     }
+
 }
