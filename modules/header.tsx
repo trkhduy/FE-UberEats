@@ -55,7 +55,6 @@ const Header = () => {
                                             <div style={{ background: '#FFD95A', borderRadius: '25px', padding: '3px 10px', textAlign: 'center' }}>
                                                 <Link href={'/user/register'}>
                                                     <span style={{ color: '#4D3C3C', fontWeight: '500', margin: '0' }}>Sign up</span>
-
                                                 </Link>
                                             </div>
                                         </Col>
@@ -69,7 +68,7 @@ const Header = () => {
                                     <ul className={style.menuOptions}>
                                         <li className={clsx([style.option])}><Link href={''}>Restaurant</Link></li>
                                         <li className={style.option}><Link href={'/food'}>Food</Link></li>
-                                        <li className={style.option}><Link href={''}>Voucher</Link></li>
+                                        <li className={style.option}><Link href={'/voucher'}>Voucher</Link></li>
                                         <li className={style.headerForm}>
                                             <div className={style.iconLocation}>
                                                 <EnvironmentOutlined />
@@ -131,7 +130,7 @@ const Header = () => {
                         </Link>
                     </li>
                     <li style={{ padding: '13px 5px', borderBottom: '1px solid #d8d8d8' }}>
-                        <Link href={''} style={{ fontSize: '22px', fontWeight: '600', color: '#000' }}>
+                        <Link href={'/voucher'} style={{ fontSize: '22px', fontWeight: '600', color: '#000' }}>
                             Voucher
                         </Link>
                     </li >
