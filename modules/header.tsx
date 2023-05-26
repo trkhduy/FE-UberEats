@@ -1,14 +1,48 @@
-import { Col, Drawer, DrawerProps, RadioChangeEvent, Row, Select } from 'antd'
-import React, { useState } from 'react'
+import { Avatar, Col, Drawer, DrawerProps, RadioChangeEvent, Row, Select } from 'antd'
+import React, { useEffect, useState } from 'react'
 import style from '../styles/layout/Header.module.scss'
 import Link from 'next/link'
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
-import { BarsOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons';
+import { BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import useToken from '@/pages/hook/useToken';
 const Header = () => {
+    const router = useRouter()
+    const [role, setRole] = useState();
+    // useEffect(() => {
+    //     setRole(useToken());
+    // }, [])
+
+    const [display1, setDisplay1] = useState('block');
+    const [display2, setDisplay2] = useState('none');
+    useEffect(() => {
+        setRole(useToken());
+        if (role) {
+            setDisplay1('none');
+            setDisplay2('block');
+        }
+        // console.log('display1' + display1);
+        // console.log('display2' + display2);
+
+    }, [router]);
+
+
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
     };
+
+    const linkHeader = (): string => {
+        if (!role) {
+            return '/user/login'
+        }
+        if (role == 1) {
+            return '/'
+        } else if (role == 2) {
+            return '/driver'
+        }
+        return '/restaurantowner'
+
+    }
     const [open, setOpen] = useState(false);
     const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
 
@@ -19,7 +53,7 @@ const Header = () => {
     const onClose = () => {
         setOpen(false);
     };
-
+    const [collapse, setCollapse] = useState(false);
 
     return (
         <>
@@ -35,7 +69,7 @@ const Header = () => {
                                         </Col>
                                         <Col>
                                             <div>
-                                                <Link href="/">
+                                                <Link href={linkHeader()}>
                                                     <span className={style.logo}>Uber <span style={{ color: "#FFD95A" }}>Eats</span></span>
                                                 </Link>
                                             </div>
@@ -88,24 +122,51 @@ const Header = () => {
                                     </ul>
                                 </Col>
                                 <Col>
-                                    <Row>
-                                        <Link href={'/user/login'}>
-                                            <div className={style.login}>
-                                                <span>Login</span>
+                                    <div style={{ display: display1 }}>
+                                        <Row>
+                                            <Link href={'/user/login'}>
+                                                <div className={style.login}>
+                                                    <span>Login</span>
+                                                </div>
+                                            </Link>
+                                            <Link href={'/user/register'}>
+                                                <div className={style.login}>
+                                                    <span>Register</span>
+                                                </div>
+                                            </Link>
+                                        </Row>
+                                    </div>
+
+
+                                    <div className={style.logged} style={{ display: display2 }} >
+                                        <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
+                                            <Avatar src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI8T-lGleySo2D8ZvH2UVNtGn9IF6lkyXesw&usqp=CAU'} style={{ width: '40px', height: '40px' }} />
+                                        </div>
+                                        {collapse &&
+                                            <div className={style.feat}>
+                                                <div className={style.btn}>
+                                                    <span>Profile</span>
+                                                    <span className={style.logOut}>
+                                                        <UserOutlined />
+                                                    </span>
+                                                </div>
+                                                <div className={style.btn}>
+                                                    <span>Logout</span>
+                                                    <span className={style.logOut}>
+                                                        <LogoutOutlined />
+                                                    </span>
+                                                </div>
+
                                             </div>
-                                        </Link>
-                                        <Link href={'/user/register'}>
-                                            <div className={style.login}>
-                                                <span>Register</span>
-                                            </div>
-                                        </Link>
-                                    </Row>
+                                        }
+                                    </div>
+
                                 </Col>
                             </Row>
                         </Col>
 
                     </Row>
-                </div>
+                </div >
             </div >
 
 

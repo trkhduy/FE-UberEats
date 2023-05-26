@@ -52,9 +52,9 @@ function Register() {
                     >
                         <Form.Item
                             name="name"
-                            rules={[{ required: true, message: 'Please input your Username!' }]}
+                            rules={[{ required: true, message: "Please input your Username/ Restaurant's name!" }]}
                         >
-                            <Input className={style.input_login} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+                            <Input className={style.input_login} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username/ Restaurant's name" />
                         </Form.Item>
                         <Form.Item
                             name="phone"
