@@ -122,7 +122,8 @@ function Register() {
                                         }
                                         return Promise.reject(new Error('The two passwords that you entered do not match!'));
                                     },
-                                }),]}
+                                }),
+                            ]}
                         >
                             <Input.Password className={style.input_login}
                                 prefix={<LockOutlined className="site-form-item-icon" />}

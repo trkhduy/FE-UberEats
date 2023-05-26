@@ -11,6 +11,11 @@ interface Product {
     image: File
 }
 export default class RestaurentService {
+    async getAllProduct() {
+        return await axiosClient.get('/product/menu')
+            .then((data) => [data, null])
+            .catch((err) => [null, err])
+    }
     async createProduct(data: Product) {
         return await axiosClient.post('/restaurant/create', data)
             .then((data) => [data, null])
@@ -22,7 +27,7 @@ export default class RestaurentService {
             .catch((err) => [null, err])
     }
     async detete(id: number) {
-        return await axiosClient.put('/restaurent/delete', id)
+        return await axiosClient.delete('/restaurent/delete/' + id,)
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }

@@ -17,6 +17,11 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
     }, [product]);
     const onFinish = (values: any) => {
         setLoading(true);
+        !values.status && (values.status = 'available');
+        values.image = values.image.originFileObj
+        // if (product) {
+
+        // }
         onCreate(values, () => {
             setLoading(false);
             form.resetFields();
@@ -65,6 +70,16 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     <Input />
                 </Form.Item>
                 <Form.Item
+                    name="categoryid"
+                    label="Category"
+                    rules={[{ required: true, message: "Please select product Category." }]}
+                >
+                    <Select>
+                        <Option value="1">Fast food</Option>
+                        <Option value="2">Slow food</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
                     name="price"
                     label="Price"
                     rules={[
@@ -75,10 +90,26 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item
+                    name="sale_price"
+                    label="Sale Price"
+                    rules={[
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('price') > value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Sale Price must be smaller than Price'));
+                            },
+                        }),
+                    ]}
+                >
+                    <InputNumber style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
                     name="desc"
                     label="Description"
                     rules={[
-                        { required: true, message: "Please enter product description." },
+                        { message: "Please enter product description." },
                     ]}
                 >
                     <Input.TextArea rows={4} />
@@ -86,15 +117,15 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                 <Form.Item
                     name="status"
                     label="Status"
-                    rules={[{ required: true, message: "Please select product status." }]}
+                    rules={[]}
                 >
-                    <Select>
+                    <Select defaultValue={'available'}>
                         <Option value="available">Available</Option>
                         <Option value="out_of_stock">Out of Stock</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item
-                    name="image"
+                    name="images"
                     label="Image"
                     rules={[{ required: true, message: "Please upload product image." }]}
                     // valuePropName="fileList"

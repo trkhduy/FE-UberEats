@@ -1,11 +1,17 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import style from "./style/listMenu.module.scss"
 import { Button, Col, Divider, Popconfirm, Row, message } from "antd";
 import clsx from "clsx";
 import CreateProductModal from "./modelProduct";
+import RestaurentService from "@/service/restaurantService";
 const Menu: FC<any> = ({ title }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [productToEdit, setProductToEdit]: any = useState(null);
+    const [listProduct, setListProduct] = useState([])
+
+    //productService
+    const restaurentService = new RestaurentService
+
     const handleCreate = (values: any, onSuccess: any) => {
         // Gửi request tạo sản phẩm đến API
         console.log("Form values", values);
@@ -31,7 +37,15 @@ const Menu: FC<any> = ({ title }) => {
         console.log(e);
         message.error('Click on No');
     };
+    const getAllProduct = async () => {
+        let [data, err] = await restaurentService.getAllProduct()
+        setListProduct(data)
+    }
 
+    useEffect(() => {
+        getAllProduct()
+    }, [])
+    console.log('listProduct', listProduct);
 
     return (
         <>
@@ -75,7 +89,7 @@ const Menu: FC<any> = ({ title }) => {
                                     <Button type="primary" style={{ marginRight: "12px" }} className={clsx(true && style.activeOrder)} >{false ? 'Stop' : 'Start'} Order</Button>
                                     <Button onClick={() => {
                                         setModalVisible(true)
-                                        setProductToEdit({ name: "aaa", price: 123, desc: "123" })
+                                        setProductToEdit({ name: "aaa", price: 123, desc: "123", category_id: "1", sale_price: 11 })
                                     }} type="primary" style={{ backgroundColor: "#FFD95A", color: "#4C3D3D", marginRight: "12px" }} >Edit</Button>
                                     <Popconfirm
                                         title="Delete the task"
