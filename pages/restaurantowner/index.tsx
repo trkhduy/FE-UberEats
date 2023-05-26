@@ -3,14 +3,32 @@ import { Col, Rate, Row } from "antd";
 import style from "../../styles/restaurant/restaurant.module.scss";
 import Menu from "@/components/restaurant_owner/listMenu";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Order from "@/components/restaurant_owner/listOrder";
 import ProcessOrder from "@/components/restaurant_owner/listProcess";
 import Statictisc from "@/components/restaurant_owner/statictisc";
+import Profile from "@/components/profile/profile";
+import { useRouter } from "next/router";
+import jwtDecode from "jwt-decode";
+import RestaurentService from "@/service/restaurantService";
 
 function RestaurentOwner() {
-
+    const router = useRouter()
     const [nav, setNav] = useState<any>()
+    const [dataInfo, setDataInfo] = useState({})
+    const restaurantService = new RestaurentService
+    const info = async () => {
+        const [data, err]: any = await restaurantService.getInfo()
+        console.log(data);
+        if (!err) {
+            setDataInfo(data)
+        }
+    }
+
+
+    useEffect(() => {
+        info()
+    }, [])
     return (
         <>
             <div className={style.page}>
@@ -58,6 +76,7 @@ function RestaurentOwner() {
                                         <div onClick={() => setNav('nav1')} className={clsx(style.item, nav === 'nav1' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/10674/10674751.png" alt="" /> Order</div>
                                         <div onClick={() => setNav('nav2')} className={clsx(style.item, nav === 'nav2' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/5643/5643764.png" alt="" /> Process Order</div>
                                         <div onClick={() => setNav('nav3')} className={clsx(style.item, nav === 'nav3' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/9849/9849587.png" alt="" /> Statictisc</div>
+                                        <div onClick={() => setNav('nav4')} className={clsx(style.item, nav === 'nav4' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/942/942748.png" alt="" /> Profile</div>
                                     </div>
                                 </div>
                             </Col>
@@ -67,14 +86,14 @@ function RestaurentOwner() {
                                     {nav === 'nav1' && <Order title="Order"></Order>}
                                     {nav === 'nav2' && <ProcessOrder title="Process Order" />}
                                     {nav === 'nav3' && <Statictisc title="Statictisc" />}
-
+                                    {nav === 'nav4' && <Profile data={dataInfo} />}
                                 </div>
                             </Col>
                         </Row>
                     </div>
                 </div>
 
-            </div>
+            </div >
         </>
     );
 }

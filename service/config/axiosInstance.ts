@@ -39,6 +39,9 @@ axiosClient.interceptors.request.use(async (config) => {
             await refreshtoken()
         }
     }
+    if (getCookie('refresh_token') && !getCookie('access_token')) {
+        await refreshtoken()
+    }
     return config
 
 }, async (error) => {

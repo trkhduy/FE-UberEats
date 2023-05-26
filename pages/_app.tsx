@@ -7,17 +7,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
+import useToken from './hook/useToken'
 
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
-  const [role, setRole]: any = useState(-1)
 
-  const screenRole = {
-    1: ['/driver', '/restaurantowner'], //sẽ bắt loại trừ 2 trường hợp này
-    2: ['/driver'],
-    3: ['/restaurantowner']
-  }
+  // const screenRole = {
+  //   1: ['/driver', '/restaurantowner'], //sẽ bắt loại trừ 2 trường hợp này
+  //   2: ['/driver'],
+  //   3: ['/restaurantowner']
+  // }
 
   const [messageApi, contextHolder] = message.useMessage();
   const checkRole = (role: number) => {
@@ -31,31 +31,33 @@ export default function App({ Component, pageProps }: AppProps) {
       return router.route.includes('/driver')
     }
     return router.route.includes('/restaurantowner')
+
+
+
+
   }
 
-  const error = () => {
+  const error = (message = 'Unauthorize') => {
     messageApi.open({
       type: 'error',
-      content: 'Unauthorize !!',
+      content: message,
     });
   };
 
   useEffect(() => {
-    const getCookie = (name: string) => {
-      const cookieValue = document.cookie?.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)') || null;
-      if (!cookieValue) {
-        return !router.route.includes('/user/login') && router.push('/user/login')
-      } else {
-        const { role }: any = jwtDecode(cookieValue.pop() as string)
-        setRole(role)
-        if (!checkRole(role)) {
-          router.push('/user/login')
-          error()
-        }
+    const role = useToken()
+
+    if (!role) {
+      if (!router.route.includes('/user/login') && !router.route.includes('/user/register')) {
+        router.push('/user/login')
+        return error('You need login now')
+      }
+    } else {
+      if (!checkRole(role)) {
+        router.push('/user/login')
+        error()
       }
     }
-    getCookie(('access_token'))
-
   }, [router])
 
   return (
