@@ -9,8 +9,9 @@ import ProcessOrder from "@/components/restaurant_owner/listProcess";
 import Statictisc from "@/components/restaurant_owner/statictisc";
 import Profile from "@/components/profile/profile";
 import { useRouter } from "next/router";
-import jwtDecode from "jwt-decode";
 import RestaurentService from "@/service/restaurantService";
+import axiosClient from "@/service/config/axiosInstance";
+
 
 function RestaurentOwner() {
     const router = useRouter()
@@ -19,7 +20,7 @@ function RestaurentOwner() {
     const restaurantService = new RestaurentService
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
-        console.log(data);
+        console.log(data)
         if (!err) {
             setDataInfo(data)
         }

@@ -125,6 +125,7 @@
             cursor: pointer;
             transition: 0.3s;
 
+
             &:hover {
                 background-color: #4C3D3D;
                 color: #fff;
@@ -133,6 +134,12 @@
             &:active {
                 opacity: 0.8;
             }
+        }
+
+        .disabled:hover {
+            background-color: #FFD95A;
+            color: #b79c4bf4;
+            cursor: default;
         }
     }
 }
