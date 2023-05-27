@@ -31,10 +31,12 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
     const [disabled, setDisabled] = useState(true)
 
     useEffect(() => {
-        console.log(data.avatar);
+        if (data) {
+            console.log(data.avatar);
 
-        data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
-        setImageUrl(data.avatar)
+            data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
+            setImageUrl(data.avatar)
+        }
         // console.log(data.role);
         // let role: number = data.role
         // data.role = { value: '1' }

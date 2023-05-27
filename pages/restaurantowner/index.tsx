@@ -19,7 +19,7 @@ function RestaurentOwner() {
     const restaurantService = new RestaurentService
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
-        console.log(data);
+        console.log('prof', data);
         if (!err) {
             setDataInfo(data)
         }

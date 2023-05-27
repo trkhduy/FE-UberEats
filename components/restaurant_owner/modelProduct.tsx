@@ -1,31 +1,43 @@
 import React, { FC, useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import RestaurentService from "@/service/restaurantService";
 
 const { Option } = Select;
 
 const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-
+    const restaurantService = new RestaurentService
     useEffect(() => {
         // Nếu product đang được truyền vào,
         // thì update lại form fields với các giá trị của product.
         if (product) {
             form.setFieldsValue(product);
+        } else {
+            form.resetFields()
         }
     }, [product]);
-    const onFinish = (values: any) => {
+
+
+    const onFinish = async (values: any) => {
         setLoading(true);
         !values.status && (values.status = 'available');
-        values.image = values.image.originFileObj
-        // if (product) {
-
-        // }
+        if (typeof values.images === 'string') {
+            delete values.images
+        } else {
+            values.images = values.images.originFileObj
+        }
+        if (product) {
+            values.id = product.id
+        }
         onCreate(values, () => {
+            console.log(values);
             setLoading(false);
-            form.resetFields();
+            !product && form.resetFields();
         });
+
+
     };
 
     const beforeUpload = (file: any) => {
@@ -54,7 +66,8 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
             cancelText="Cancel"
             onCancel={() => {
                 onCancel();
-                form.resetFields();
+                setLoading(false)
+                { !product && form.resetFields(); }
                 return true
             }}
             onOk={() => form.submit()}
@@ -106,7 +119,7 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item
-                    name="desc"
+                    name="description"
                     label="Description"
                     rules={[
                         { message: "Please enter product description." },

@@ -16,24 +16,33 @@ interface Profile {
     opentime: number,
     endtime: number
 }
+
+function getFormData(object: any) {
+    const formData = new FormData();
+    Object.keys(object).forEach(key => formData.append(key, object[key]));
+    return formData;
+}
 export default class RestaurentService {
     async getAllProduct() {
         return await axiosClient.get('/product/menu')
-            .then((data) => [data, null])
+            .then((data: any) => {
+                return [data.data, null]
+            })
             .catch((err) => [null, err])
     }
     async createProduct(data: Product) {
-        return await axiosClient.post('/restaurant/create', data)
+
+        return await axiosClient.post('/product', getFormData(data))
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }
-    async editProduct(data: Product) {
-        return await axiosClient.put('/restaurent/edit' + data.id, data)
+    async editProduct(data: Product, id: number) {
+        return await axiosClient.put('/product/' + id, getFormData(data))
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }
     async detete(id: number) {
-        return await axiosClient.delete('/restaurent/delete/' + id,)
+        return await axiosClient.delete('/product/' + id,)
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }

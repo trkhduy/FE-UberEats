@@ -7,7 +7,7 @@ const axiosClient = axios.create({
 })
 
 //default url
-axiosClient.defaults.baseURL = 'http://192.168.137.1:3333/api'
+axiosClient.defaults.baseURL = 'http://localhost:3333/api'
 
 
 //get token in cookie

@@ -31,6 +31,8 @@ function Login() {
     const onFinish = async (values: any) => {
         let [res, err]: any = await userService.login(values)
         if (res && !err) {
+            console.log(res);
+
             setCookies('access_token', res.data.token.access_token as string);
             setCookies('refresh_token', res.data.token.refresh_token as string, { maxAge: 31556926 });
             success()
@@ -42,9 +44,9 @@ function Login() {
 
             }, 1000)
         } else {
-            console.log(err);
+            console.log('err', err);
 
-            error(err.response.data.message)
+            error(err.response?.data?.message)
         }
         // console.log('Received values of form: ', values);
     };
