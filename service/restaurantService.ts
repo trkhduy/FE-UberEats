@@ -10,13 +10,6 @@ interface Product {
     status: string,
     image: File
 }
-interface Profile {
-    id?: number,
-    address: string,
-    opentime: number,
-    endtime: number
-}
-
 function getFormData(object: any) {
     const formData = new FormData();
     Object.keys(object).forEach(key => formData.append(key, object[key]));
@@ -51,19 +44,32 @@ export default class RestaurentService {
     async getInfo() {
         try {
             const respone = await axiosClient.get('/user/profile')
-            return [respone.data.user, null];
+            return [respone.data, null];
         } catch (error) {
             return [null, error];
         }
     }
 
-    async updateProfile(data: Profile) {
+
+    async updateProfile(data: any) {
+        const { address, ...rest } = data;
+        const data1 = { 'address': address };
+        const data2 = rest
+        let res = (data1)
+        let user = getFormData(data2)
+        const checkRes: any = await axiosClient.get('/restaurant/detail')
+
         try {
-            const response = await axiosClient.put('/user', data);
-            // console.log('response', response);
+            const response = await axiosClient.put('/user', user);
+            if (!checkRes.data) {
+                const createRes = await axiosClient.post('/restaurant')
+                console.log('if' + createRes);
+            } else {
+                const updateRes = await axiosClient.put(`/restaurant/${checkRes.data.id}`, res)
+                console.log('else' + updateRes);
+            }
             return [response, null];
         } catch (error) {
-            // console.error(error);
             return [null, error];
         }
     }

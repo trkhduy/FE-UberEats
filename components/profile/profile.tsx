@@ -6,6 +6,8 @@ import clsx from 'clsx';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload';
 import { useRouter } from 'next/router';
 import { useForm } from 'antd/es/form/Form';
+import RestaurentService from '@/service/restaurantService';
+
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
@@ -27,26 +29,47 @@ const beforeUpload = (file: RcFile) => {
     return false;
 };
 const Profile: FC<any> = ({ title = 'Your profile', data }) => {
-    const [form] = Form.useForm()
-    const [disabled, setDisabled] = useState(true)
 
+    const router = useRouter();
+    const [form] = Form.useForm();
+    const [disabled, setDisabled] = useState(true);
+    const resService = new RestaurentService;
     useEffect(() => {
-        if (data) {
-            console.log(data.avatar);
-
-            data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
-            setImageUrl(data.avatar)
-        }
-        // console.log(data.role);
-        // let role: number = data.role
-        // data.role = { value: '1' }
-        // form.setFieldsValue(data);
-        // form.setFieldsValue({ role: { value: 4 } });
+        !data.avatar.includes(process.env.SERVER_HOST) && (data.avatar = process.env.SERVER_HOST + '/upload/' + data.avatar);
+        setImageUrl(data.avatar);
+      
     }, [])
 
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: 'Update infomation successfully!',
+        });
     };
+    const error = (title: string) => {
+        messageApi.open({
+            type: 'error',
+            content: title,
+        });
+    };
+    const onFinish = async (values: any) => {
+        if (typeof values.avatar === 'string') {
+            delete values.avatar;
+        } else {
+            values.avatar = values.avatar.file;
+        }
+        const [respone, err]: any = await resService.updateProfile(values)
+        if (respone) {
+            router.push('/restaurantowner');
+            setDisabled(true);
+            success()
+        } else {
+            console.log('err' + err);
+            error(err.response.data.message)
+        }
+    };
+
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
     };
@@ -78,6 +101,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
 
     return (
         <>
+            {contextHolder}
             <div className={style.bg}>
                 <div className={style.login}>
 
@@ -102,12 +126,15 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                         <Form.Item
                             name="avatar"
                             rules={[{ required: true, message: 'Please input your Username!' }]}
+
                         >
                             <Upload
                                 name="avatar"
                                 listType="picture-card"
                                 className="avatar-uploader"
                                 showUploadList={false}
+                                maxCount={1}
+
                                 // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                                 beforeUpload={beforeUpload}
                                 onChange={handleChangeA}
@@ -156,6 +183,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                         </Form.Item>
                         <Form.Item
                             name="address"
+                            initialValue={data.restaurant.address}
                             rules={[{ required: true, message: 'Please input your address!' }]}
                         >
                             <Input className={style.input_login} prefix={<EnvironmentOutlined className="site-form-item-icon" />} placeholder="Address" />
