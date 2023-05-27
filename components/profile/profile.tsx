@@ -7,6 +7,7 @@ import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/uplo
 import { useRouter } from 'next/router';
 import { useForm } from 'antd/es/form/Form';
 import RestaurentService from '@/service/restaurantService';
+
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
@@ -28,6 +29,7 @@ const beforeUpload = (file: RcFile) => {
     return false;
 };
 const Profile: FC<any> = ({ title = 'Your profile', data }) => {
+
     const router = useRouter();
     const [form] = Form.useForm();
     const [disabled, setDisabled] = useState(true);
@@ -35,12 +37,9 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
     useEffect(() => {
         !data.avatar.includes(process.env.SERVER_HOST) && (data.avatar = process.env.SERVER_HOST + '/upload/' + data.avatar);
         setImageUrl(data.avatar);
-        // console.log(data.role);
-        // let role: number = data.role
-        // data.role = { value: '1' }
-        // form.setFieldsValue(data);
-        // form.setFieldsValue({ role: { value: 4 } });
+      
     }, [])
+
     const [messageApi, contextHolder] = message.useMessage();
     const success = () => {
         messageApi.open({

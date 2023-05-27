@@ -54,8 +54,8 @@ axiosClient.interceptors.response.use((response: any) => {
 
     return response
 }, (err) => {
-    if (err.response.status === 403) {
-        window.location.href = '/user/login'
+    if (err.response.status === 401) {
+        // window.location.href = '/user/login'
     }
     // if (err.response.status === 403) {
     //     window.location.href = '/user/login'

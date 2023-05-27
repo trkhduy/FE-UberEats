@@ -1,26 +1,43 @@
 import React, { FC, useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import RestaurentService from "@/service/restaurantService";
 
 const { Option } = Select;
 
 const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-
+    const restaurantService = new RestaurentService
     useEffect(() => {
         // Nếu product đang được truyền vào,
         // thì update lại form fields với các giá trị của product.
         if (product) {
             form.setFieldsValue(product);
+        } else {
+            form.resetFields()
         }
     }, [product]);
-    const onFinish = (values: any) => {
+
+
+    const onFinish = async (values: any) => {
         setLoading(true);
+        !values.status && (values.status = 'available');
+        if (typeof values.images === 'string') {
+            delete values.images
+        } else {
+            values.images = values.images.originFileObj
+        }
+        if (product) {
+            values.id = product.id
+        }
         onCreate(values, () => {
+            console.log(values);
             setLoading(false);
-            form.resetFields();
+            !product && form.resetFields();
         });
+
+
     };
 
     const beforeUpload = (file: any) => {
@@ -49,7 +66,8 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
             cancelText="Cancel"
             onCancel={() => {
                 onCancel();
-                form.resetFields();
+                setLoading(false)
+                { !product && form.resetFields(); }
                 return true
             }}
             onOk={() => form.submit()}
@@ -65,6 +83,16 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     <Input />
                 </Form.Item>
                 <Form.Item
+                    name="categoryid"
+                    label="Category"
+                    rules={[{ required: true, message: "Please select product Category." }]}
+                >
+                    <Select>
+                        <Option value="1">Fast food</Option>
+                        <Option value="2">Slow food</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
                     name="price"
                     label="Price"
                     rules={[
@@ -75,10 +103,26 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item
-                    name="desc"
+                    name="sale_price"
+                    label="Sale Price"
+                    rules={[
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('price') > value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Sale Price must be smaller than Price'));
+                            },
+                        }),
+                    ]}
+                >
+                    <InputNumber style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
+                    name="description"
                     label="Description"
                     rules={[
-                        { required: true, message: "Please enter product description." },
+                        { message: "Please enter product description." },
                     ]}
                 >
                     <Input.TextArea rows={4} />
@@ -86,15 +130,15 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                 <Form.Item
                     name="status"
                     label="Status"
-                    rules={[{ required: true, message: "Please select product status." }]}
+                    rules={[]}
                 >
-                    <Select>
+                    <Select defaultValue={'available'}>
                         <Option value="available">Available</Option>
                         <Option value="out_of_stock">Out of Stock</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item
-                    name="image"
+                    name="images"
                     label="Image"
                     rules={[{ required: true, message: "Please upload product image." }]}
                     // valuePropName="fileList"
