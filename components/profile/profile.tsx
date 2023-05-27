@@ -37,7 +37,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
     useEffect(() => {
         !data.avatar.includes(process.env.SERVER_HOST) && (data.avatar = process.env.SERVER_HOST + '/upload/' + data.avatar);
         setImageUrl(data.avatar);
-      
+
     }, [])
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -183,7 +183,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                         </Form.Item>
                         <Form.Item
                             name="address"
-                            initialValue={data.restaurant.address}
+                            initialValue={data?.restaurant?.address}
                             rules={[{ required: true, message: 'Please input your address!' }]}
                         >
                             <Input className={style.input_login} prefix={<EnvironmentOutlined className="site-form-item-icon" />} placeholder="Address" />
