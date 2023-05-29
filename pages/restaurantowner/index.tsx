@@ -9,7 +9,6 @@ import ProcessOrder from "@/components/restaurant_owner/listProcess";
 import Statictisc from "@/components/restaurant_owner/statictisc";
 import Profile from "@/components/profile/profile";
 import { useRouter } from "next/router";
-import jwtDecode from "jwt-decode";
 import RestaurentService from "@/service/restaurantService";
 import Category from "@/components/restaurant_owner/listCategory";
 import Voucher from "../voucher";
@@ -23,7 +22,6 @@ function RestaurentOwner() {
     const restaurantService = new RestaurentService
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
-        console.log('prof', data);
         if (!err) {
             setDataInfo(data)
         }
