@@ -9,7 +9,7 @@ function getFormData(object: any) {
     return formData;
 }
 export default class RestaurentService {
-    async getAllProduct() {
+    async getMenu() {
         return await axiosClient.get('/product/menu')
             .then((data: any) => {
                 return [data.data, null]
