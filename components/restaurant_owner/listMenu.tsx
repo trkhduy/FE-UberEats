@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import style from "./style/listMenu.module.scss"
-import { Button, Col, Divider, Popconfirm, Row, message } from "antd";
+import { Button, Col, Divider, Empty, Popconfirm, Row, message } from "antd";
 import clsx from "clsx";
 import CreateProductModal from "./modelProduct";
 import RestaurentService from "@/service/restaurantService";
@@ -97,7 +97,7 @@ const Menu: FC<any> = ({ title }) => {
                     <span style={{ display: "inline-block", width: "2px", height: "2px", backgroundColor: "#FFD95A", marginLeft: '3px' }} ></span>
                 </div>
                 <div className={style.list}>
-                    {listProduct.map((item: any) =>
+                    {listProduct.length > 0 ? listProduct.map((item: any) =>
                         <div className={style.item}>
                             <Row>
                                 <Col flex={'auto'}>
@@ -147,7 +147,7 @@ const Menu: FC<any> = ({ title }) => {
 
                             <Divider />
                         </div>
-                    )}
+                    ) : <Empty />}
 
 
                 </div>

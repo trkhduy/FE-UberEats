@@ -11,6 +11,10 @@ import Profile from "@/components/profile/profile";
 import { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
 import RestaurentService from "@/service/restaurantService";
+import Category from "@/components/restaurant_owner/listCategory";
+import Voucher from "../voucher";
+import ListVoucher from "@/components/restaurant_owner/listVoucher";
+
 
 function RestaurentOwner() {
     const router = useRouter()
@@ -73,6 +77,8 @@ function RestaurentOwner() {
                                     </div>
                                     <div className={style.list}>
                                         <div onClick={() => setNav(null)} className={clsx(style.item, !nav && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/1046/1046747.png" alt="" /> Menu</div>
+                                        <div onClick={() => setNav('nav5')} className={clsx(style.item, nav === 'nav5' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/3843/3843517.png" alt="" /> Category</div>
+                                        <div onClick={() => setNav('nav6')} className={clsx(style.item, nav === 'nav6' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/9031/9031952.png" alt="" /> Voucher</div>
                                         <div onClick={() => setNav('nav1')} className={clsx(style.item, nav === 'nav1' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/10674/10674751.png" alt="" /> Order</div>
                                         <div onClick={() => setNav('nav2')} className={clsx(style.item, nav === 'nav2' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/5643/5643764.png" alt="" /> Process Order</div>
                                         <div onClick={() => setNav('nav3')} className={clsx(style.item, nav === 'nav3' && style.active)}><img width={24} src="https://cdn-icons-png.flaticon.com/512/9849/9849587.png" alt="" /> Statictisc</div>
@@ -87,6 +93,8 @@ function RestaurentOwner() {
                                     {nav === 'nav2' && <ProcessOrder title="Process Order" />}
                                     {nav === 'nav3' && <Statictisc title="Statictisc" />}
                                     {nav === 'nav4' && <Profile data={dataInfo} />}
+                                    {nav === 'nav5' && <Category />}
+                                    {nav === 'nav6' && <ListVoucher voucher={[]} />}
                                 </div>
                             </Col>
                         </Row>
