@@ -35,8 +35,18 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
     const [disabled, setDisabled] = useState(true);
     const resService = new RestaurentService;
     useEffect(() => {
-        !data.avatar.includes(process.env.SERVER_HOST) && (data.avatar = process.env.SERVER_HOST + '/upload/' + data.avatar);
-        setImageUrl(data.avatar);
+
+        if (data) {
+            console.log(data.avatar);
+
+            data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
+            setImageUrl(data.avatar)
+        }
+        // console.log(data.role);
+        // let role: number = data.role
+        // data.role = { value: '1' }
+        // form.setFieldsValue(data);
+        // form.setFieldsValue({ role: { value: 4 } });
 
     }, [])
 
