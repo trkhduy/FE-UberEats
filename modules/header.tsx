@@ -6,26 +6,19 @@ import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useToken from '@/pages/hook/useToken';
+import UserService from '@/service/userService';
 const Header = () => {
-    const router = useRouter()
+    const router = useRouter();
+    const userService = new UserService;
     const [role, setRole] = useState();
-    // useEffect(() => {
-    //     setRole(useToken());
-    // }, [])
-
-    const [display1, setDisplay1] = useState('block');
-    const [display2, setDisplay2] = useState('none');
     useEffect(() => {
         setRole(useToken());
-        if (role) {
-            setDisplay1('none');
-            setDisplay2('block');
-        }
-        // console.log('display1' + display1);
-        // console.log('display2' + display2);
+    }, [router])
 
-    }, [router]);
-
+    const logOut = async () => {
+        await userService.logOut()
+        router.push('/user/login')
+    }
 
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
@@ -122,7 +115,7 @@ const Header = () => {
                                     </ul>
                                 </Col>
                                 <Col>
-                                    <div style={{ display: display1 }}>
+                                    {!role && <div>
                                         <Row>
                                             <Link href={'/user/login'}>
                                                 <div className={style.login}>
@@ -135,10 +128,10 @@ const Header = () => {
                                                 </div>
                                             </Link>
                                         </Row>
-                                    </div>
+                                    </div>}
 
 
-                                    <div className={style.logged} style={{ display: display2 }} >
+                                    {role && <div className={style.logged}  >
                                         <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
                                             <Avatar src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI8T-lGleySo2D8ZvH2UVNtGn9IF6lkyXesw&usqp=CAU'} style={{ width: '40px', height: '40px' }} />
                                         </div>
@@ -150,16 +143,16 @@ const Header = () => {
                                                         <UserOutlined />
                                                     </span>
                                                 </div>
-                                                <div className={style.btn}>
+                                                <div className={style.btn} onClick={logOut}>
                                                     <span>Logout</span>
-                                                    <span className={style.logOut}>
+                                                    <span className={style.logOut} >
                                                         <LogoutOutlined />
                                                     </span>
                                                 </div>
 
                                             </div>
                                         }
-                                    </div>
+                                    </div>}
 
                                 </Col>
                             </Row>

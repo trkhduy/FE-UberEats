@@ -62,7 +62,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
         const [respone, err]: any = await resService.updateProfile(values)
         if (respone) {
             router.push('/restaurantowner');
-            setDisabled(true);
+            // setDisabled(true);
             success()
         } else {
             console.log('err' + err);

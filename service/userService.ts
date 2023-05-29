@@ -21,10 +21,19 @@ export default class UserService {
             return [null, error];
         }
     }
+
     async register(data: Register) {
         return await axiosClient.post('/user/register', data)
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }
 
+    async logOut() {
+        try {
+            const res = await axiosClient.get('/user/logout');
+            return [res, null]
+        } catch (error) {
+            return [null, error ]
+        }
+    }
 }
