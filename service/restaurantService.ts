@@ -10,11 +10,6 @@ interface Product {
     status: string,
     image: File
 }
-function getFormData(object: any) {
-    const formData = new FormData();
-    Object.keys(object).forEach(key => formData.append(key, object[key]));
-    return formData;
-}
 interface Category {
     id?: number,
     name: string,
@@ -63,21 +58,19 @@ export default class RestaurentService {
 
 
     async updateProfile(data: any) {
-        const { address, ...rest } = data;
-        const data1 = { 'address': address };
-        const data2 = rest
-        let res = (data1)
-        let user = getFormData(data2)
-        const checkRes: any = await axiosClient.get('/restaurant/detail')
+        const { address, opentime, endtime, ...rest } = data;
+        const data1 = { 'address': address, 'opentime': opentime, 'endtime': endtime };
+        const data2 = rest;
+        let res = data1;
+        let user = getFormData(data2);
+        const checkRes: any = await axiosClient.get('/restaurant/detail');
 
         try {
             const response = await axiosClient.put('/user', user);
             if (!checkRes.data) {
                 const createRes = await axiosClient.post('/restaurant')
-                console.log('if' + createRes);
             } else {
                 const updateRes = await axiosClient.put(`/restaurant/${checkRes.data.id}`, res)
-                console.log('else' + updateRes);
             }
             return [response, null];
         } catch (error) {

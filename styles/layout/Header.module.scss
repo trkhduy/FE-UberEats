@@ -81,6 +81,54 @@
             @media screen and (max-width: 992px) {
                 display: block;
             }
+
+            .logged {
+                position: relative;
+
+                .feat {
+                    position: absolute;
+                    background-color: #4C3D3D;
+                    border: 2px solid #ffd94e;
+                    border-radius: 7px;
+
+                    min-width: 100px;
+                    width: 140px;
+                    z-index: 1000;
+                    right: 0px;
+                    top: calc(100% + 10px);
+
+                    vertical-align: middle;
+                    color: #f9db77;
+                    font-weight: 500;
+
+                    .btn {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 6px 16px;
+
+                        span {
+                            padding: 0 1px;
+                            vertical-align: middle;
+
+                            &:last-child {
+                                padding-bottom: 3px;
+                            }
+                        }
+
+                        &:last-child {
+                            border-top: 1px solid #f9db77;
+                        }
+
+                        &:hover {
+                            background-color: #f9db77;
+                            color: #4C3D3D;
+                            cursor: pointer;
+                        }
+                    }
+
+
+                }
+            }
         }
 
         .menu {
