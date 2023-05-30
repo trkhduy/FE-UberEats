@@ -1,9 +1,10 @@
-import Profile from "@/components/profile/profile";
+import DriverProfile from "@/components/profile/profileDriver";
+
 
 function ProfileDriver() {
     return (
         <>
-            <Profile></Profile>
+            <DriverProfile />
         </>
     );
 }

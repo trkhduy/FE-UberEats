@@ -10,11 +10,6 @@ interface Product {
     status: string,
     image: File
 }
-function getFormData(object: any) {
-    const formData = new FormData();
-    Object.keys(object).forEach(key => formData.append(key, object[key]));
-    return formData;
-}
 interface Category {
     id?: number,
     name: string,

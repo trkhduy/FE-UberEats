@@ -9,6 +9,11 @@ interface Register {
     role: number,
     password: string
 }
+function getFormData(object: any) {
+    const formData = new FormData();
+    Object.keys(object).forEach(key => formData.append(key, object[key]));
+    return formData;
+}
 export default class UserService {
 
     async login(data: { email: string, password: string }) {
@@ -33,7 +38,25 @@ export default class UserService {
             const res = await axiosClient.get('/user/logout');
             return [res, null]
         } catch (error) {
-            return [null, error ]
+            return [null, error]
+        }
+    }
+
+    //profile
+    async getInfo() {
+        try {
+            const respone = await axiosClient.get('/user/profile')
+            return [respone.data, null];
+        } catch (error) {
+            return [null, error];
+        }
+    }
+    async updateProfile(data: any) {
+        try {
+            const respone = await axiosClient.put('/user', getFormData(data))
+            return [respone.data, null];
+        } catch (error) {
+            return [null, error];
         }
     }
 }
