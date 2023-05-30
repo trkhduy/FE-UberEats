@@ -19,7 +19,6 @@ const Header = () => {
         const [user, err] = await clientService.getInfo();
         if (user) {
             setUserInfo(user);
-            console.log(user);
         }
         if (err) {
             console.log(err);

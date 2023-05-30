@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setCookies } from "cookies-next";
+import { deleteCookie, setCookies } from "cookies-next";
 import jwtDecode from "jwt-decode";
 
 const axiosClient = axios.create({
@@ -22,6 +22,8 @@ const refreshtoken = async () => {
         await setCookies('access_token', res.data.token.access_token as string, { maxAge: 100000000000 });
         await setCookies('refresh_token', res.data.token.refresh_token as string, { maxAge: 100000000000 });
     }).catch(e => {
+        deleteCookie('access_token')
+        deleteCookie('refresh_token')
         window.location.href = '/user/login'
     })
 }
@@ -39,9 +41,9 @@ axiosClient.interceptors.request.use(async (config) => {
             await refreshtoken()
         }
     }
-    if (getCookie('refresh_token') && !getCookie('access_token')) {
-        await refreshtoken()
-    }
+    // if (getCookie('refresh_token') && !getCookie('access_token')) {
+    //     await refreshtoken()
+    // }
     return config
 
 }, async (error) => {
