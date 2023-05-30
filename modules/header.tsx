@@ -1,4 +1,4 @@
-import { Avatar, Col, Drawer, DrawerProps, RadioChangeEvent, Row, Select } from 'antd'
+import { Avatar, Badge, Col, Drawer, DrawerProps, RadioChangeEvent, Row, Select } from 'antd'
 import React, { useEffect, useState } from 'react'
 import style from '../styles/layout/Header.module.scss'
 import Link from 'next/link'
@@ -7,13 +7,32 @@ import { useRouter } from 'next/router';
 import { BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useToken from '@/pages/hook/useToken';
 import UserService from '@/service/userService';
+import ClientService from '@/service/clientService';
 const Header = () => {
     const router = useRouter();
     const userService = new UserService;
+    const clientService = new ClientService;
     const [role, setRole] = useState();
+    const [userInfo, setUserInfo]: any = useState({});
+
+    const getUser = async () => {
+        const [user, err] = await clientService.getInfo();
+        if (user) {
+            setUserInfo(user);
+            console.log(user);
+        }
+        if (err) {
+            console.log(err);
+        }
+    }
+
     useEffect(() => {
         setRole(useToken());
     }, [router])
+
+    useEffect(() => {
+        getUser();
+    }, [])
 
     const logOut = async () => {
         await userService.logOut()
@@ -70,22 +89,58 @@ const Header = () => {
                                     </Row>
                                 </Col>
                                 <Col className={style.login_mobile}>
-                                    <Row align="middle" >
-                                        <Col>
-                                            <Link href={'/user/login'}>
-                                                <div style={{ background: '#fff', borderRadius: '25px', width: '30px', height: "25px", textAlign: 'center', marginRight: '5px' }}>
-                                                    <UserOutlined style={{ lineHeight: '25px', color: '#4D3C3C' }} />
-                                                </div>
-                                            </Link>
-                                        </Col>
-                                        <Col>
-                                            <div style={{ background: '#FFD95A', borderRadius: '25px', padding: '3px 10px', textAlign: 'center' }}>
-                                                <Link href={'/user/register'}>
-                                                    <span style={{ color: '#4D3C3C', fontWeight: '500', margin: '0' }}>Sign up</span>
+                                    {!role &&
+                                        <Row align="middle" >
+                                            <Col>
+                                                <Link href={'/user/login'}>
+                                                    <div style={{ background: '#fff', borderRadius: '25px', width: '30px', height: "25px", textAlign: 'center', marginRight: '5px' }}>
+                                                        <UserOutlined style={{ lineHeight: '25px', color: '#4D3C3C' }} />
+                                                    </div>
                                                 </Link>
-                                            </div>
-                                        </Col>
-                                    </Row>
+                                            </Col>
+                                            <Col>
+                                                <div style={{ background: '#FFD95A', borderRadius: '25px', padding: '3px 10px', textAlign: 'center' }}>
+                                                    <Link href={'/user/register'}>
+                                                        <span style={{ color: '#4D3C3C', fontWeight: '500', margin: '0' }}>Sign up</span>
+                                                    </Link>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    }
+                                    {role && <div className={style.logged}  >
+                                        <Row align={'middle'}>
+                                            <Col style={{ marginRight: '20px' }}>
+                                                <Link href={'/cart'}>
+                                                    <Badge count={5} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                        <img src={"https://cdn-icons-png.flaticon.com/512/7646/7646966.png"} alt="" style={{ width: '3 0px', height: '30px' }} />
+                                                    </Badge>
+                                                </Link>
+                                            </Col>
+                                            <Col>
+                                                <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
+                                                    <Avatar src={userInfo.avatar} style={{ width: '40px', height: '40px' }} />
+                                                </div>
+                                                {collapse &&
+                                                    <div className={style.feat}>
+                                                        <div className={style.btn}>
+                                                            <span>Profile</span>
+                                                            <span className={style.logOut}>
+                                                                <UserOutlined />
+                                                            </span>
+                                                        </div>
+                                                        <div className={style.btn} onClick={logOut}>
+                                                            <span>Logout</span>
+                                                            <span className={style.logOut} >
+                                                                <LogoutOutlined />
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+                                                }
+                                            </Col>
+                                        </Row>
+
+                                    </div>}
                                 </Col>
                             </Row>
                         </Col>
@@ -132,26 +187,38 @@ const Header = () => {
 
 
                                     {role && <div className={style.logged}  >
-                                        <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
-                                            <Avatar src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI8T-lGleySo2D8ZvH2UVNtGn9IF6lkyXesw&usqp=CAU'} style={{ width: '40px', height: '40px' }} />
-                                        </div>
-                                        {collapse &&
-                                            <div className={style.feat}>
-                                                <div className={style.btn}>
-                                                    <span>Profile</span>
-                                                    <span className={style.logOut}>
-                                                        <UserOutlined />
-                                                    </span>
+                                        <Row align={'middle'}>
+                                            <Col style={{ marginRight: '20px' }}>
+                                                <Link href={'/cart'}>
+                                                    <Badge count={5} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                        <img src="https://cdn-icons-png.flaticon.com/512/7646/7646966.png" alt="" style={{ width: '3 0px', height: '30px' }} />
+                                                    </Badge>
+                                                </Link>
+                                            </Col>
+                                            <Col>
+                                                <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
+                                                    <Avatar src={userInfo.avatar} style={{ width: '40px', height: '40px' }} />
                                                 </div>
-                                                <div className={style.btn} onClick={logOut}>
-                                                    <span>Logout</span>
-                                                    <span className={style.logOut} >
-                                                        <LogoutOutlined />
-                                                    </span>
-                                                </div>
+                                                {collapse &&
+                                                    <div className={style.feat}>
+                                                        <div className={style.btn}>
+                                                            <span>Profile</span>
+                                                            <span className={style.logOut}>
+                                                                <UserOutlined />
+                                                            </span>
+                                                        </div>
+                                                        <div className={style.btn} onClick={logOut}>
+                                                            <span>Logout</span>
+                                                            <span className={style.logOut} >
+                                                                <LogoutOutlined />
+                                                            </span>
+                                                        </div>
 
-                                            </div>
-                                        }
+                                                    </div>
+                                                }
+                                            </Col>
+                                        </Row>
+
                                     </div>}
 
                                 </Col>
@@ -208,16 +275,20 @@ const Header = () => {
                             </Col>
                         </Row>
                     </li>
-                    <li style={{ padding: '13px 5px', marginTop: '25px' }}>
-                        <Link href={'/user/register'} style={{ padding: '13px 40px', background: '#000', color: '#fff', fontSize: '17px', fontWeight: '600', borderRadius: '5px' }}>
-                            Sign up
-                        </Link>
-                    </li>
-                    <li style={{ padding: '13px 5px', marginTop: '25px' }}>
-                        <Link href={'/user/login'} style={{ padding: '13px 40px', background: '#e9e9e9', color: '#000', fontSize: '17px', fontWeight: '600', borderRadius: '5px' }}>
-                            Log in
-                        </Link>
-                    </li>
+                    {!role &&
+                        <li style={{ padding: '13px 5px', marginTop: '25px' }}>
+                            <Link href={'/user/register'} style={{ padding: '13px 40px', background: '#000', color: '#fff', fontSize: '17px', fontWeight: '600', borderRadius: '5px' }}>
+                                Sign up
+                            </Link>
+                        </li>
+                    }
+                    {!role &&
+                        <li style={{ padding: '13px 5px', marginTop: '25px' }}>
+                            <Link href={'/user/login'} style={{ padding: '13px 40px', background: '#e9e9e9', color: '#000', fontSize: '17px', fontWeight: '600', borderRadius: '5px' }}>
+                                Log in
+                            </Link>
+                        </li>
+                    }
                 </ul>
             </Drawer>
         </>

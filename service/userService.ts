@@ -27,6 +27,8 @@ export default class UserService {
         }
     }
 
+    
+
     async register(data: Register) {
         return await axiosClient.post('/user/register', data)
             .then((data) => [data, null])
