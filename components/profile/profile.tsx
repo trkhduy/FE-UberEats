@@ -1,4 +1,4 @@
-import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined, EnvironmentOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Checkbox, Col, Form, Input, Row, Segmented, Select, Upload, message } from 'antd';
 import style from '@/pages/user/style/login.module.scss'
 import { FC, useEffect, useState } from 'react';
@@ -197,6 +197,20 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                             rules={[{ required: true, message: 'Please input your address!' }]}
                         >
                             <Input className={style.input_login} prefix={<EnvironmentOutlined className="site-form-item-icon" />} placeholder="Address" />
+                        </Form.Item>
+                        <Form.Item
+                            name="opentime"
+                            initialValue={data?.restaurant?.opentime}
+                            rules={[{ required: true, message: 'Please input your opentime!' }]}
+                        >
+                            <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="Open time" />
+                        </Form.Item>
+                        <Form.Item
+                            name="endtime"
+                            initialValue={data?.restaurant?.endtime}
+                            rules={[{ required: true, message: 'Please input your endtime!' }]}
+                        >
+                            <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="End time" />
                         </Form.Item>
                         {/* <Form.Item
                             name="password"
