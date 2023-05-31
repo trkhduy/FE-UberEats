@@ -147,12 +147,12 @@ function HomeClient(): any {
                                         <Col key={i} xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                             <div className={style.card_item}>
                                                 <div className={style.img_item}>
-                                                    <Link href={''}>
+                                                    <Link href={`/food/${e.id}`}>
                                                         <img src={e.images} alt="" />
                                                     </Link>
                                                 </div>
                                                 <div className={style.content_item}>
-                                                    <Link href={''}>
+                                                    <Link href={`/food/${e.id}`}>
                                                         <h3>{e.name}</h3>
                                                     </Link>
                                                     <div className={style.price_item}>
@@ -170,7 +170,7 @@ function HomeClient(): any {
                                                         }
 
                                                         <div className={style.cart_plus}>
-                                                            <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                            <Link href={'/cart'} style={{ color: '#4D3C3C' }}>
                                                                 <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                             </Link>
                                                         </div>
@@ -227,7 +227,7 @@ function HomeClient(): any {
                                     < Col key={i} xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                         <div className={style.card_item}>
                                             <div className={style.img_item}>
-                                                <Link href={''}>
+                                                <Link href={`/food/${e.id}`}>
                                                     <img src={e.images} alt="" />
                                                 </Link>
                                                 <div className={style.stars}>
@@ -239,7 +239,7 @@ function HomeClient(): any {
                                                 </div>
                                             </div>
                                             <div className={style.content_item}>
-                                                <Link href={''}>
+                                                <Link href={`/food/${e.id}`}>
                                                     <h3>{e.name}</h3>
                                                 </Link>
                                                 <div className={style.price_item}>
@@ -256,7 +256,7 @@ function HomeClient(): any {
                                                         </div>
                                                     }
                                                     <div className={style.cart_plus}>
-                                                        <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                        <Link href={'/cart'} style={{ color: '#4D3C3C' }}>
                                                             <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                         </Link>
                                                     </div>

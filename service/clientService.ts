@@ -48,4 +48,23 @@ export default class ClientService {
             return [null, error]
         }
     }
+
+    //detail food
+    async getDetailFood(id: any) {
+        try {
+            const respone = await axiosClient.get(`/product/${id}`);
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
+
+    async getRelatedFood(id: any) {
+        try {
+            const respone = await axiosClient.get(`/product/${id}/relatedProduct`);
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
 }
