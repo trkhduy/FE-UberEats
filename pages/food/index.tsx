@@ -218,12 +218,12 @@ const Index = () => {
                                             < Col key={i} className={style.item} xl={8} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 10px", marginBottom: "35px" }}>
                                                 <div className={style.card_item}>
                                                     <div className={style.img_item}>
-                                                        <Link href={''} style={{ textDecoration: 'none' }}>
+                                                        <Link href={`/food/${e.id}`} style={{ textDecoration: 'none' }}>
                                                             <img src={e.images} alt="" />
                                                         </Link>
                                                     </div>
                                                     <div className={style.content_item}>
-                                                        <Link href={''} style={{ textDecoration: 'none' }}>
+                                                        <Link href={`/food/${e.id}`} style={{ textDecoration: 'none' }}>
                                                             <h3>{e.name}</h3>
                                                         </Link>
                                                         <div className={style.price_item}>
@@ -240,7 +240,7 @@ const Index = () => {
                                                                 </div>
                                                             }
                                                             <div className={style.cart_plus}>
-                                                                <Link href={''} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
+                                                                <Link href={'/cart'} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
                                                                     <ShoppingCartOutlined style={{ fontSize: '24px' }} />
                                                                 </Link>
                                                             </div>
