@@ -8,9 +8,12 @@ import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import useToken from './hook/useToken'
+import { Provider } from 'react-redux'
+import store from '@/redux/store'
 
 
 export default function App({ Component, pageProps }: AppProps) {
+  // const { store } = wrapper.useWrappedStore(pageProps);
   const router = useRouter()
 
   // const screenRole = {
@@ -61,13 +64,16 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router])
 
   return (
-    // checkRole(role) && (
-    <Layout>
-      {contextHolder}
-      <Component {...pageProps} />
-      {router.route.includes('/driver') && <LayoutDriver />}
-    </Layout>
-    // )
+
+    <Provider store={store}>
+      <Layout>
+        {contextHolder}
+        <Component {...pageProps} />
+        {router.route.includes('/driver') && <LayoutDriver />}
+      </Layout>
+    </Provider>
+
+
 
   )
 
