@@ -28,4 +28,24 @@ export default class ClientService {
             return [null, error]
         }
     }
+
+    async getCategory() {
+        try {
+            const respone = await axiosClient.get('/category');
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
+
+    async getAllPro(keyword?: any) {
+        let url = keyword ? '?' + keyword : ''
+        console.log(url);
+        try {
+            const respone = await axiosClient.get('/product' + url);
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
 }

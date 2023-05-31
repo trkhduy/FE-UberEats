@@ -1,31 +1,75 @@
 import React, { useEffect, useState } from 'react'
 import style from './style/shop.module.scss'
-import { Button, Col, Form, Input, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Button, Col, Empty, Form, Input, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { ClockCircleFilled, RightOutlined, ShoppingCartOutlined, SyncOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import ClientService from '@/service/clientService';
 
 
 
 const Index = () => {
+    const clientService = new ClientService;
     const { Search } = Input;
-    const onSearch = (value: string) => console.log(value);
+    const [keyword, setKeyWord]: any = useState({});
+    const onSearch = (value: string) => {
+        setKeyWord((data: any) => {
+            return {
+                ...data,
+                name: value
+            }
+        })
+    };
     const [collapse, setCollapse] = useState(false);
     const [collapse2, setCollapse2] = useState(false);
     const [collapse3, setCollapse3] = useState(false);
+    const [category, setCategory] = useState([]);
+    const [product, setProduct] = useState([]);
+    const getCategory = async () => {
+        const [cate, err]: any = await clientService.getCategory();
+        if (cate) {
+            setCategory(cate);
+        }
+        if (err) {
+            console.log(err);
+        }
+    }
+    const getProduct = async () => {
+        const data = queryString(keyword);
+        const [pro, err]: any = await clientService.getAllPro(data);
+        if (pro) {
+            setProduct(pro);
+        }
+        if (err) {
+            console.log(err);
+        }
+    }
+    const queryString = (data: any) => {
+        return Object.entries(data)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+    }
+
     const onFinish = (values: any) => {
         console.log('Success:', values);
+        setKeyWord((data: any) => {
+            return { ...data, ...values }
+        })
     };
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
 
-    const [value, setValue] = useState(1);
+    const [value, setValue] = useState();
 
     const onChange = (e: RadioChangeEvent) => {
         console.log('radio checked', e.target.value);
+        setKeyWord((data: any) => {
+            return { ...data, categoryid: e.target.value }
+        })
         setValue(e.target.value);
     }
+
     const [width, setWidth] = useState(0)
 
     const handleWindowResize = () => {
@@ -33,6 +77,12 @@ const Index = () => {
     }
 
     useEffect(() => {
+        getProduct()
+    }, [keyword]);
+
+    useEffect(() => {
+        getCategory()
+
         // component is mounted and window is available
         handleWindowResize();
         window.addEventListener('resize', handleWindowResize);
@@ -73,7 +123,7 @@ const Index = () => {
                                             <span>Food Search</span>
                                             <RightOutlined style={{ fontSize: '12px', transition: "0.3s", transform: collapse ? "rotate(90deg)" : 'rotate(0)' }} />
                                         </div>
-                                        {collapse && <Search placeholder="input search text" allowClear onSearch={onSearch} className={style.inputSearch} style={{ width: '100%', borderRadius: '0' }} />}
+                                        {collapse && <Search placeholder="search product" allowClear onSearch={onSearch} className={style.inputSearch} style={{ width: '100%', borderRadius: '0' }} />}
                                     </div>
                                 </div>
 
@@ -96,14 +146,14 @@ const Index = () => {
                                                     <Row gutter={[10, 0]} style={{ marginTop: '20px' }}>
                                                         <Col span={12}>
                                                             <Form.Item
-                                                                name="lowPrice"
+                                                                name="minPrice"
                                                             >
                                                                 <Input placeholder='Min price' />
                                                             </Form.Item>
                                                         </Col>
                                                         <Col span={12}>
                                                             <Form.Item
-                                                                name="highPrice"
+                                                                name="maxPrice"
                                                             >
                                                                 <Input placeholder='Max price' />
                                                             </Form.Item>
@@ -129,9 +179,16 @@ const Index = () => {
                                             {collapse3 &&
                                                 <Radio.Group onChange={onChange} value={value}>
                                                     <Space direction="vertical">
-                                                        <Radio value={1}>Option A</Radio>
-                                                        <Radio value={2}>Option B</Radio>
-                                                        <Radio value={3}>Option C</Radio>
+                                                        {category && category.length > 0 ? category.map((e: any, i) => {
+                                                            return (
+                                                                <>
+                                                                    <Radio key={i} value={e.id}>{e.name}</Radio>
+                                                                </>
+                                                            )
+                                                        })
+                                                            : <></>
+                                                        }
+
                                                     </Space>
                                                 </Radio.Group>
                                             }
@@ -156,47 +213,67 @@ const Index = () => {
                                     </div>
                                 </div>
                                 <Row>
-                                    <Col className={style.item} xl={8} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 10px", marginBottom: "35px" }}>
-                                        <div className={style.card_item}>
-                                            <div className={style.img_item}>
-                                                <Link href={''} style={{ textDecoration: 'none' }}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/01-1-1.png" alt="" />
-                                                </Link>
-                                            </div>
-                                            <div className={style.content_item}>
-                                                <Link href={''} style={{ textDecoration: 'none' }}>
-                                                    <h3>Organic Acardian Food</h3>
-                                                </Link>
-                                                <div className={style.price_item}>
-                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                        <span className={style.cur_price}>$100</span>
-                                                        <div className={style.dash}></div>
-                                                        <span className={style.sale_price}>$70</span>
-                                                    </div>
-                                                    <div className={style.cart_plus}>
-                                                        <Link href={''} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
-                                                            <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                    {product && product.length > 0 ? product.map((e: any, i) => {
+                                        return (
+                                            < Col key={i} className={style.item} xl={8} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 10px", marginBottom: "35px" }}>
+                                                <div className={style.card_item}>
+                                                    <div className={style.img_item}>
+                                                        <Link href={''} style={{ textDecoration: 'none' }}>
+                                                            <img src={e.images} alt="" />
                                                         </Link>
                                                     </div>
-                                                </div>
-                                                <div className={style.res_info}>
-                                                    <div className={style.img_res}>
-                                                        <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/05/066.jpg" alt="" />
-                                                    </div>
-                                                    <div className={style.res_detail_info}>
-                                                        <div className={style.working_on}>
-                                                            <ClockCircleFilled style={{ color: 'green' }} />
-                                                            <span>8:00 am - 10:00 pm</span>
+                                                    <div className={style.content_item}>
+                                                        <Link href={''} style={{ textDecoration: 'none' }}>
+                                                            <h3>{e.name}</h3>
+                                                        </Link>
+                                                        <div className={style.price_item}>
+                                                            {
+                                                                e.sale_price > 0 && <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                    <span className={style.cur_price}>${e.price}</span>
+                                                                    <div className={style.dash}></div>
+                                                                    <span className={style.sale_price}>${e.sale_price}</span>
+                                                                </div>
+                                                            }
+                                                            {
+                                                                e.sale_price == 0 && <div>
+                                                                    <span className={style.sale_price}>${e.price}</span>
+                                                                </div>
+                                                            }
+                                                            <div className={style.cart_plus}>
+                                                                <Link href={''} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
+                                                                    <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                                </Link>
+                                                            </div>
                                                         </div>
-                                                        <div className={style.res_address}>
-                                                            <img src="https://cdn-icons-png.flaticon.com/512/1865/1865269.png" alt="" />
-                                                            <span>Main Boulevard, , Lahore,</span>
+                                                        <div className={style.res_info}>
+                                                            <div className={style.img_res}>
+                                                                <img src={e.user.avatar} alt="" />
+                                                            </div>
+                                                            <div className={style.res_detail_info}>
+                                                                <div className={style.working_on}>
+                                                                    <ClockCircleFilled style={{ color: 'green' }} />
+                                                                    {e.restaurant && e.restaurant.opentime && e.restaurant.endtime
+                                                                        ? < span > {e.restaurant.opentime} am - {e.restaurant.endtime} pm</span>
+                                                                        : <span>8:00 am - 10:00 pm</span>
+                                                                    }
+                                                                </div>
+                                                                <div className={style.res_address}>
+                                                                    <img src="https://cdn-icons-png.flaticon.com/512/1865/1865269.png" alt="" />
+                                                                    {
+                                                                        e.restaurant && e.restaurant.address
+                                                                            ? <span>{e.restaurant.address}</span>
+                                                                            : <span>Main Boulevard, , Lahore,</span>
+                                                                    }
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </Col>
+                                            </Col>
+                                        )
+                                    })
+                                        : <Empty style={{ margin: '0 auto' }} />
+                                    }
                                 </Row>
                             </div>
                         </Col>
