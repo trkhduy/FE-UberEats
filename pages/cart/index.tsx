@@ -1,5 +1,5 @@
 import { CloseOutlined, DeleteOutlined, MinusOutlined } from '@ant-design/icons';
-import { Col, Divider, Input, Row, message } from 'antd';
+import { Col, Divider, Empty, Input, Row, message } from 'antd';
 import clsx from 'clsx';
 // import IpNumber from '../../../component/inputNumber/ipNumber';
 import style from './style/cart.module.scss'
@@ -92,7 +92,7 @@ function Cart() {
                 <Row>
                     <Col lg={16} span={24}>
                         <div className={clsx(style.list, 'pe-lg-3 pe-0')}>
-                            {dataCart.map((item: any) => (
+                            {dataCart && dataCart.length > 0 ? dataCart.map((item: any) => (
                                 <div className={style.item} key={item.id}>
                                     <Row align='middle'>
                                         <Col sm={12} span={24}>
@@ -121,7 +121,9 @@ function Cart() {
                                         </Col>
                                     </Row>
                                 </div>
-                            ))}
+                            ))
+                                : <Empty style={{ margin: '0 auto' }} />
+                            }
 
                             <div className={style.coupon}>
                                 <input type={'text'} placeholder="Coupon Code" />

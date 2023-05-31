@@ -27,7 +27,7 @@ export default class UserService {
         }
     }
 
-    
+
 
     async register(data: Register) {
         return await axiosClient.post('/user/register', data)
@@ -56,6 +56,33 @@ export default class UserService {
     async updateProfile(data: any) {
         try {
             const respone = await axiosClient.put('/user', getFormData(data))
+            return [respone.data, null];
+        } catch (error) {
+            return [null, error];
+        }
+    }
+
+    //crud user Address
+
+    async createUserAdress(data: any) {
+        try {
+            const respone = await axiosClient.post('/user-address', data)
+            return [respone.data, null];
+        } catch (error) {
+            return [null, error];
+        }
+    }
+    async updateUserAdress(data: any, id: any) {
+        try {
+            const respone = await axiosClient.put(`/user-address/${id}`, data)
+            return [respone.data, null];
+        } catch (error) {
+            return [null, error];
+        }
+    }
+    async deleteUserAddress(id: any) {
+        try {
+            const respone = await axiosClient.delete(`/user-address/${id}`)
             return [respone.data, null];
         } catch (error) {
             return [null, error];

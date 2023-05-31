@@ -4,7 +4,6 @@ import { Button, Col, Empty, Input, Row, Tooltip, message } from 'antd'
 import { ClockCircleFilled, SearchOutlined, ShoppingCartOutlined, StarFilled } from '@ant-design/icons'
 import Link from 'next/link'
 import ClientService from '@/service/clientService'
-import CartSrtvice from '@/service/cartService'
 import CartService from '@/service/cartService'
 import { useDispatch } from 'react-redux'
 import { fetchCartCount } from '@/redux/reducer/cartReducer'
@@ -185,9 +184,9 @@ function HomeClient(): any {
                                                             </div>
                                                         }
                                                         <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
-                                                            {/* <Link href={''} style={{ color: '#4D3C3C' }}> */}
-                                                            <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                            {/* </Link> */}
+                                                            <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
+                                                                <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className={style.res_info}>
@@ -270,10 +269,10 @@ function HomeClient(): any {
                                                             <span className={style.sale_price}>${e.price}</span>
                                                         </div>
                                                     }
-                                                    <div className={style.cart_plus}>
-                                                        <Link href={'/cart'} style={{ color: '#4D3C3C' }}>
+                                                    <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
+                                                        <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
                                                             <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                        </Link>
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div className={style.res_info}>
