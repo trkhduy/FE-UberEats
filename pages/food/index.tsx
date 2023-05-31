@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import style from './style/shop.module.scss'
-import { Button, Col, Empty, Form, Input, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Button, Col, Empty, Form, Input, InputNumber, Radio, RadioChangeEvent, Row, Space, message } from 'antd';
 import { ClockCircleFilled, RightOutlined, ShoppingCartOutlined, SyncOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import ClientService from '@/service/clientService';
+import CartService from '@/service/cartService';
+import { useDispatch } from 'react-redux';
+import { fetchCartCount } from '@/redux/reducer/cartReducer';
+import { useRouter } from 'next/router';
 
 
 
 const Index = () => {
+    const router = useRouter();
+
     const clientService = new ClientService;
     const { Search } = Input;
     const [keyword, setKeyWord]: any = useState({});
+    const cartService = new CartService;
+    const dispatch = useDispatch();
     const onSearch = (value: string) => {
         setKeyWord((data: any) => {
             return {
@@ -32,6 +40,10 @@ const Index = () => {
         if (err) {
             console.log(err);
         }
+    }
+    const refreshParam = async () => {
+        setValue('')
+        setKeyWord('')
     }
     const getProduct = async () => {
         const data = queryString(keyword);
@@ -60,7 +72,7 @@ const Index = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const [value, setValue] = useState();
+    const [value, setValue]: any = useState();
 
     const onChange = (e: RadioChangeEvent) => {
         console.log('radio checked', e.target.value);
@@ -69,7 +81,15 @@ const Index = () => {
         })
         setValue(e.target.value);
     }
-
+    const handleAddCart = async (id_product: number, name: string) => {
+        let [data, err] = await cartService.createCart({ productid: id_product, quantity: 1 })
+        if (!err) {
+            message.success(name + ' added to cart')
+            dispatch(fetchCartCount());
+        } else {
+            message.error('Error, Please try again!')
+        }
+    }
     const [width, setWidth] = useState(0)
 
     const handleWindowResize = () => {
@@ -77,12 +97,17 @@ const Index = () => {
     }
 
     useEffect(() => {
+        router.replace({
+            query: keyword,
+        });
+
         getProduct()
     }, [keyword]);
 
     useEffect(() => {
+        // router.
         getCategory()
-
+        setKeyWord(router.query)
         // component is mounted and window is available
         handleWindowResize();
         window.addEventListener('resize', handleWindowResize);
@@ -112,8 +137,8 @@ const Index = () => {
                                             <span style={{ display: "inline-block", width: "2px", height: "3px", backgroundColor: "#FFD95A", marginLeft: '3px' }} ></span>
                                         </div>
                                     </div>
-                                    <div className={style.refresh}>
-                                        <SyncOutlined style={{ fontSize: '16px', color: '#FFD95A' }} />
+                                    <div className={style.refresh} onClick={refreshParam}>
+                                        <SyncOutlined style={{ fontSize: '16px', color: '#FFD95A', verticalAlign: '1.5px' }} />
                                         <span>Refresh</span>
                                     </div>
                                 </div>
@@ -148,14 +173,25 @@ const Index = () => {
                                                             <Form.Item
                                                                 name="minPrice"
                                                             >
-                                                                <Input placeholder='Min price' />
+                                                                <InputNumber width={'100%'} placeholder='Min price' />
                                                             </Form.Item>
                                                         </Col>
                                                         <Col span={12}>
                                                             <Form.Item
                                                                 name="maxPrice"
+                                                                rules={[
+
+                                                                    ({ getFieldValue }) => ({
+                                                                        validator(_, value: any) {
+                                                                            if (!value || Number(getFieldValue('minPrice')) <= Number(value)) {
+                                                                                return Promise.resolve();
+                                                                            }
+                                                                            return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                                                        },
+                                                                    }),
+                                                                ]}
                                                             >
-                                                                <Input placeholder='Max price' />
+                                                                <InputNumber placeholder='Max price' />
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
@@ -165,7 +201,6 @@ const Index = () => {
                                                         </Button>
                                                     </Form.Item>
                                                 </div>
-
                                             }
                                         </div>
                                     </div>
@@ -194,11 +229,7 @@ const Index = () => {
                                             }
                                         </div>
                                     </div>
-
-
                                 </Form>
-
-
                             </div>
                         </Col>
                         <Col xl={18} md={24} sm={24} xs={24}>
@@ -239,10 +270,10 @@ const Index = () => {
                                                                     <span className={style.sale_price}>${e.price}</span>
                                                                 </div>
                                                             }
-                                                            <div className={style.cart_plus}>
-                                                                <Link href={'/cart'} style={{ textDecoration: 'none', color: '#4D3C3C' }}>
+                                                            <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
+                                                                <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
                                                                     <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                                </Link>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div className={style.res_info}>
@@ -277,8 +308,8 @@ const Index = () => {
                                 </Row>
                             </div>
                         </Col>
-                    </Row>
-                </div>
+                    </Row >
+                </div >
             </div >
         </>
     )

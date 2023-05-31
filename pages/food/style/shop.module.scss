@@ -12,7 +12,7 @@
         padding: 80px 0;
         text-align: center;
         background-repeat: no-repeat;
-        ;
+        margin-top: 67px;
 
         h2 {
             font-size: 40px;
@@ -54,6 +54,10 @@
                 .search {
                     width: auto;
 
+                    & :global .ant-input-number {
+                        width: 100% !important;
+                    }
+
                     .title_search {
                         margin-bottom: 20px;
                         display: flex;
@@ -91,7 +95,7 @@
             }
 
             .item {
-                
+
                 .card_item {
                     border: 1px solid #d8d8d8;
 
@@ -117,6 +121,7 @@
                             color: #4C3D3D;
                             letter-spacing: 1.5px;
                             margin: 15px 0;
+                            text-transform: capitalize;
                         }
 
                         .price_item {
@@ -148,7 +153,7 @@
 
                             .cart_plus {
 
-                                a {
+                                span>span {
                                     &:hover {
                                         color: #FFCC00 !important;
                                         transition: 0.2s;

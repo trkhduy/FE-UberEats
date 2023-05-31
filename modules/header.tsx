@@ -139,7 +139,9 @@ const Header = () => {
                                                 {collapse &&
                                                     <div className={style.feat}>
                                                         <div className={style.btn}>
-                                                            <span>Profile</span>
+                                                            <Link href={'/user/profile'}>
+                                                                <span>Profile</span>
+                                                            </Link>
                                                             <span className={style.logOut}>
                                                                 <UserOutlined />
                                                             </span>
@@ -218,16 +220,20 @@ const Header = () => {
                                                 {collapse &&
                                                     <div className={style.feat}>
                                                         <div className={style.btn}>
-                                                            <span>Profile</span>
-                                                            <span className={style.logOut}>
-                                                                <UserOutlined />
-                                                            </span>
+                                                            <Link href={'/user/profile'}>
+                                                                <span>Profile</span>
+                                                                <span className={style.logOut}>
+                                                                    <UserOutlined />
+                                                                </span>
+                                                            </Link>
                                                         </div>
                                                         <div className={style.btn} onClick={logOut}>
-                                                            <span>Logout</span>
-                                                            <span className={style.logOut} >
-                                                                <LogoutOutlined />
-                                                            </span>
+                                                            <a>
+                                                                <span>Logout</span>
+                                                                <span className={style.logOut} >
+                                                                    <LogoutOutlined />
+                                                                </span>
+                                                            </a>
                                                         </div>
 
                                                     </div>

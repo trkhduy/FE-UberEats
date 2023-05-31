@@ -1,4 +1,4 @@
-import { Col, Empty, InputNumber, Row } from 'antd'
+import { Col, Empty, InputNumber, Row, message } from 'antd'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import style from './style/detail.module.scss'
@@ -6,12 +6,19 @@ import Link from 'next/link'
 import { ClockCircleFilled, ClockCircleOutlined, CopyFilled, DollarOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 import BtnCopy from '@/components/btncopy'
 import ClientService from '@/service/clientService'
+import { useDispatch } from 'react-redux'
+import CartService from '@/service/cartService'
+import { fetchCartCount } from '@/redux/reducer/cartReducer'
+
 const DetailProduct = () => {
     const clientService = new ClientService;
     const router = useRouter();
     const [detailPro, setDetailPro]: any = useState({});
     const [relatedPro, setRelatedPro] = useState([]);
     const { id }: any = router.query;
+    const cartService = new CartService;
+    const dispatch = useDispatch();
+
     const getDetailPro = async (id: number) => {
         const [detail, err] = await clientService.getDetailFood(id)
         if (detail) {
@@ -33,6 +40,15 @@ const DetailProduct = () => {
     const changeQuantity = (value: 1 | 100 | null) => {
         console.log('changed', value);
     };
+    const handleAddCart = async (id_product: number, name: string) => {
+        let [data, err] = await cartService.createCart({ productid: id_product, quantity: 1 })
+        if (!err) {
+            message.success(name + ' added to cart')
+            dispatch(fetchCartCount());
+        } else {
+            message.error('Error, Please try again!')
+        }
+    }
     useEffect(() => {
         getDetailPro(id);
         getRelatedPro(id)
@@ -53,7 +69,7 @@ const DetailProduct = () => {
                                     <div className={style.pro_cate}>
                                         <span className={style.category}>{detailPro?.category?.name}</span> - <span><Link href={''} style={{ color: '#187caa', textDecoration: 'none' }}>Branches</Link></span>
                                     </div>
-                                    <h2 style={{ margin: '20px 0', fontWeight: '700', fontSize: '26px', color: '#464646', letterSpacing: '1.1px' }}>{detailPro.name}</h2>
+                                    <h2 style={{ margin: '20px 0', textTransform: 'capitalize', fontWeight: '700', fontSize: '26px', color: '#464646', letterSpacing: '1.1px' }}>{detailPro.name}</h2>
                                     {!detailPro.restaurant && <p style={{ color: "#252525", margin: '20px 0', }}>8 Ng. 66 Đ. Hồ Tùng Mậu, P. Mai Dịch, Cầu Giấy, Hà Nội</p>}
                                     {detailPro.restaurant && <p style={{ color: "#252525", margin: '20px 0', }}>{detailPro.restaurant.address}</p>}
                                     <div className={style.working} style={{ margin: '20px 0' }}>
@@ -112,10 +128,10 @@ const DetailProduct = () => {
                                                                         <span className={style.sale_price}>${e.price}</span>
                                                                     </div>
                                                                 }
-                                                                <div className={style.cart_plus}>
-                                                                    <Link href={'/cart'} style={{ color: '#4D3C3C', textDecoration: 'none' }}>
+                                                                <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
+                                                                    <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
                                                                         <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                                    </Link>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div className={style.res_info}>
