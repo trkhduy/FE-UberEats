@@ -24,7 +24,7 @@ function Login() {
     const error = (title: string) => {
         messageApi.open({
             type: 'error',
-            content: title,
+            content: title || 'Server Errol!',
         });
     };
 

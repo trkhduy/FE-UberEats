@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import style from './style/home.module.scss'
-import { Button, Col, Empty, Input, Row, Tooltip } from 'antd'
+import { Button, Col, Empty, Input, Row, Tooltip, message } from 'antd'
 import { ClockCircleFilled, SearchOutlined, ShoppingCartOutlined, StarFilled } from '@ant-design/icons'
 import Link from 'next/link'
 import ClientService from '@/service/clientService'
+import CartSrtvice from '@/service/cartService'
+import CartService from '@/service/cartService'
+import { useDispatch } from 'react-redux'
+import { fetchCartCount } from '@/redux/reducer/cartReducer'
 
 
 function HomeClient(): any {
@@ -11,6 +15,9 @@ function HomeClient(): any {
     const [width, setWidth] = useState(0);
     const [newPro, setNewPro] = useState([]);
     const [salePro, setSalePro] = useState([]);
+    const dispatch = useDispatch();
+    const cartService = new CartService
+
     const handleWindowResize = () => {
         setWidth(window.innerWidth);
     }
@@ -30,6 +37,15 @@ function HomeClient(): any {
         }
         if (err) {
             console.log(err);
+        }
+    }
+    const handleAddCart = async (id_product: number, name: string) => {
+        let [data, err] = await cartService.createCart({ productid: id_product, quantity: 1 })
+        if (!err) {
+            message.success(name + ' added to cart')
+            dispatch(fetchCartCount());
+        } else {
+            message.error('Error, Please try again!')
         }
     }
     useEffect(() => {
@@ -168,11 +184,10 @@ function HomeClient(): any {
                                                                 <span className={style.sale_price}>${e.price}</span>
                                                             </div>
                                                         }
-
-                                                        <div className={style.cart_plus}>
-                                                            <Link href={'/cart'} style={{ color: '#4D3C3C' }}>
-                                                                <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                            </Link>
+                                                        <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
+                                                            {/* <Link href={''} style={{ color: '#4D3C3C' }}> */}
+                                                            <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                            {/* </Link> */}
                                                         </div>
                                                     </div>
                                                     <div className={style.res_info}>
@@ -203,7 +218,7 @@ function HomeClient(): any {
                                         </Col>
                                     )
                                 })
-                                    : <Empty />
+                                    : <Empty style={{ margin: "0 auto" }} />
                             }
                         </Row>
                     </div>
@@ -289,7 +304,7 @@ function HomeClient(): any {
                                     </Col>
                                 )
                             })
-                                : <Empty />
+                                : <Empty style={{ margin: "0 auto" }} />
                             }
                         </Row>
                     </div>

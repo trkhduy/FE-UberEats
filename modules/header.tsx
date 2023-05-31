@@ -3,13 +3,21 @@ import React, { useEffect, useState } from 'react'
 import style from '../styles/layout/Header.module.scss'
 import Link from 'next/link'
 import clsx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useToken from '@/pages/hook/useToken';
 import UserService from '@/service/userService';
 import ClientService from '@/service/clientService';
+import { fetchCartCount, selectCartCount } from '@/redux/reducer/cartReducer';
+
+// import { updateCart } from '@/redux/reducer/cartReducer';
 const Header = () => {
     const router = useRouter();
+    const cartCount = useSelector(selectCartCount);
+    const dispatch = useDispatch();
+    const [top, setTop] = useState(0)
+
     const userService = new UserService;
     const clientService = new ClientService;
     const [role, setRole] = useState();
@@ -26,11 +34,20 @@ const Header = () => {
     }
 
     useEffect(() => {
+
+        // Dispatch thunk để lấy giá trị số lượng giỏ hàng ban đầu
+        dispatch(fetchCartCount());
+    }, [dispatch]);
+    useEffect(() => {
         setRole(useToken());
     }, [router])
 
     useEffect(() => {
+        window.addEventListener('scroll', () => setTop(window.scrollY))
         getUser();
+        return window.removeEventListener('scroll', () => window.scrollY)
+        console.log('cartC', cartCount);
+
     }, [])
 
     const logOut = async () => {
@@ -68,7 +85,7 @@ const Header = () => {
 
     return (
         <>
-            <div className={style.nav_container}>
+            <div className={style.nav_container} style={{ position: 'fixed', zIndex: "1000", width: "100%", top: -2 }}>
                 <div className={style.nav}>
                     <Row justify="space-between" align="middle">
                         <Col flex={"141px"} className={style.nav_mobile} >
@@ -110,7 +127,7 @@ const Header = () => {
                                         <Row align={'middle'}>
                                             <Col style={{ marginRight: '20px' }}>
                                                 <Link href={'/cart'}>
-                                                    <Badge count={5} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                    <Badge count={Number(cartCount)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
                                                         <img src={"https://cdn-icons-png.flaticon.com/512/7646/7646966.png"} alt="" style={{ width: '3 0px', height: '30px' }} />
                                                     </Badge>
                                                 </Link>
@@ -189,7 +206,7 @@ const Header = () => {
                                         <Row align={'middle'}>
                                             <Col style={{ marginRight: '20px' }}>
                                                 <Link href={'/cart'}>
-                                                    <Badge count={5} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                    <Badge count={Number(cartCount)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
                                                         <img src="https://cdn-icons-png.flaticon.com/512/7646/7646966.png" alt="" style={{ width: '3 0px', height: '30px' }} />
                                                     </Badge>
                                                 </Link>
