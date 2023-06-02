@@ -69,16 +69,23 @@ const UserAddressModal: FC<any> = ({ visible, onCreate, onCancel, category }) =>
         >
             <Form layout="vertical" form={form} onFinish={onFinish}>
                 <Form.Item
+                    name="name"
+                    label="Username"
+                    rules={[{ required: true, message: "Please enter user name." }]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
                     name="name_address"
                     label="Name Address"
-                    rules={[{ required: true, message: "Please enter category name." }]}
+                    rules={[{ required: true, message: "Please enter address name." }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
                     name="phone"
                     label="Phone Number"
-                    rules={[{ required: true, message: "Please enter category name." }]}
+                    rules={[{ required: true, message: "Please enter phonenumber" }]}
                 >
                     <Input />
                 </Form.Item>

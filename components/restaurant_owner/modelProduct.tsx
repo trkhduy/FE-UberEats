@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import RestaurentService from "@/service/restaurantService";
+import ClientService from "@/service/clientService";
 
 const { Option } = Select;
 
@@ -9,6 +10,17 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const restaurantService = new RestaurentService
+    const [listCate, setListCate] = useState([])
+    const categoryService = new ClientService
+    const getCate = async () => {
+        const [data, err] = await categoryService.getCategory()
+        if (!err) {
+            setListCate(data);
+        }
+    }
+    useEffect(() => {
+        getCate()
+    }, [])
     useEffect(() => {
         // Nếu product đang được truyền vào,
         // thì update lại form fields với các giá trị của product.
@@ -88,8 +100,9 @@ const CreateProductModal: FC<any> = ({ visible, onCreate, onCancel, product }) =
                     rules={[{ required: true, message: "Please select product Category." }]}
                 >
                     <Select>
-                        <Option value="1">Fast food</Option>
-                        <Option value="2">Slow food</Option>
+                        {listCate.map((item: any) => {
+                            return (<Option value={item.id}>{item.name}</Option>)
+                        })}
                     </Select>
                 </Form.Item>
                 <Form.Item

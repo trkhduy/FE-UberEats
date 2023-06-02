@@ -18,6 +18,24 @@
             padding: 20px 20px;
         }
 
+        .select {
+            width: 83% !important;
+            padding: 20px 0;
+            background-color: transparent;
+            display: block;
+            // @media screen and (max-width:576px) {
+            //     width: 100% !important;
+            // }
+
+            div {
+                border-radius: 0 !important;
+            }
+
+            input {
+                background-color: transparent;
+            }
+        }
+
         .info_ship {
             padding: 0 10px;
 
@@ -42,6 +60,29 @@
 
                 input {
                     background-color: transparent;
+                }
+            }
+
+            .btn_login {
+                padding: 10px;
+                border: none;
+                background-color: #252525;
+                font-size: 10px;
+                font-weight: 500;
+                letter-spacing: 1.5px;
+                font-family: 'Poppins', sans-serif;
+                cursor: pointer;
+                transition: 0.3s;
+                color: #fff;
+
+
+                &:hover {
+                    background-color: #4C3D3D;
+                    color: #fff;
+                }
+
+                &:active {
+                    opacity: 0.8;
                 }
             }
         }

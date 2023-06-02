@@ -5,21 +5,34 @@ import RestaurentService from "@/service/restaurantService";
 
 const { Option } = Select;
 
-const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
+const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const restaurantService = new RestaurentService
+    formV = form
     useEffect(() => {
         // Nếu Voucher đang được truyền vào,
         // thì update lại form fields với các giá trị của Voucher.
-        console.log(voucher);
-
+        // console.log(voucher);
+        console.log('aa', voucher);
         if (voucher) {
             // form.setFieldsValue(voucher);
         } else {
             form.resetFields()
         }
     }, [voucher]);
+    useEffect(() => {
+        // Nếu Voucher đang được truyền vào,
+        // thì update lại form fields với các giá trị của Voucher.
+        console.log('aa', voucher);
+
+        if (voucher) {
+            // form.setFieldsValue(voucher);
+        } else {
+            form.resetFields()
+        }
+    }, []);
+
 
 
     const onFinish = async (values: any) => {
@@ -35,7 +48,7 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
         onCreate(values, () => {
             console.log(values);
             setLoading(false);
-            !voucher && form.resetFields();
+            form.resetFields();
         });
 
 
@@ -67,15 +80,17 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
             cancelText="Cancel"
             onCancel={() => {
                 onCancel();
+                console.log('reset');
+
                 setLoading(false)
-                { !voucher && form.resetFields(); }
+                form.resetFields()
                 return true
             }}
             onOk={() => form.submit()}
             confirmLoading={loading}
             destroyOnClose
         >
-            <Form layout="vertical" form={form} initialValues={voucher} onFinish={onFinish}>
+            <Form layout="vertical" form={form} initialValues={{ ...voucher, conditions: Number(voucher?.conditions) }} onFinish={onFinish}>
                 <Form.Item
                     name="name"
                     label="Name"

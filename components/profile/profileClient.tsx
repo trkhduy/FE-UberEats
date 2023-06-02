@@ -260,6 +260,7 @@ const ClientProfile: FC<any> = ({ title = 'Your profile', data }) => {
                         <Table dataSource={dataProfile.addresses}>
 
                             <Column title="Id" dataIndex="id" key="id" />
+                            <Column title="Name" dataIndex="name" key="name" />
                             <Column title="Address" dataIndex="name_address" key="name_address" />
                             <Column title="Phone" dataIndex="phone" key="phone" />
                             <Column
