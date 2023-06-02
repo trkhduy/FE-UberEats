@@ -58,19 +58,21 @@ export default class RestaurentService {
 
 
     async updateProfile(data: any) {
-        const { address, opentime, endtime, ...rest } = data;
-        const data1 = { 'address': address, 'opentime': opentime, 'endtime': endtime };
+        const { restaurant, ...rest } = data;
+        // const data1 = { 'address': address, 'opentime': opentime, 'endtime': endtime };
         const data2 = rest;
-        let res = data1;
+        console.log('user', data2);
+
+        // let res = data1;
         let user = getFormData(data2);
         const checkRes: any = await axiosClient.get('/restaurant/detail');
 
         try {
             const response = await axiosClient.put('/user', user);
             if (!checkRes.data) {
-                const createRes = await axiosClient.post('/restaurant')
+                const createRes = await axiosClient.post('/restaurant', data.restaurant)
             } else {
-                const updateRes = await axiosClient.put(`/restaurant/${checkRes.data.id}`, res)
+                const updateRes = await axiosClient.put(`/restaurant/${checkRes.data.id}`, data.restaurant)
             }
             return [response, null];
         } catch (error) {

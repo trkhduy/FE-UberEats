@@ -7,12 +7,12 @@ import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/uplo
 import { useRouter } from 'next/router';
 import { useForm } from 'antd/es/form/Form';
 import RestaurentService from '@/service/restaurantService';
+import ClientService from '@/service/clientService';
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
     console.log(reader.readAsDataURL(img));
-
 };
 
 const beforeUpload = (file: RcFile) => {
@@ -31,15 +31,18 @@ const beforeUpload = (file: RcFile) => {
 const Profile: FC<any> = ({ title = 'Your profile', data }) => {
 
     const router = useRouter();
+
     const [form] = Form.useForm();
     const [disabled, setDisabled] = useState(true);
     const resService = new RestaurentService;
+
+
     useEffect(() => {
 
         if (data) {
-            console.log(data.avatar);
+            // sconsole.log(data.avatar);
 
-            data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
+            // data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
             setImageUrl(data.avatar)
         }
         // console.log(data.role);
@@ -64,6 +67,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
         });
     };
     const onFinish = async (values: any) => {
+        
         if (typeof values.avatar === 'string') {
             delete values.avatar;
         } else {
@@ -192,22 +196,22 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                             <Input className={style.input_login} prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
                         <Form.Item
-                            name="address"
-                            initialValue={data?.restaurant?.address}
+                            name={['restaurant', 'address']}
+
                             rules={[{ required: true, message: 'Please input your address!' }]}
                         >
                             <Input className={style.input_login} prefix={<EnvironmentOutlined className="site-form-item-icon" />} placeholder="Address" />
                         </Form.Item>
                         <Form.Item
-                            name="opentime"
-                            initialValue={data?.restaurant?.opentime}
+                            name={['restaurant', 'opentime']}
+
                             rules={[{ required: true, message: 'Please input your opentime!' }]}
                         >
                             <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="Open time" />
                         </Form.Item>
                         <Form.Item
-                            name="endtime"
-                            initialValue={data?.restaurant?.endtime}
+                            name={['restaurant', 'endtime']}
+
                             rules={[{ required: true, message: 'Please input your endtime!' }]}
                         >
                             <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="End time" />

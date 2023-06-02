@@ -13,6 +13,7 @@ const ListVoucher: FC<any> = () => {
     const [voucherToEdit, setVoucherToEdit]: any = useState(null);
     const [listVoucher, setListVoucher] = useState([])
     const restaurentService = new RestaurentService
+    const [form, setForm]: any = useState()
     const handleCreate = async (values: any, onSuccess: any) => {
         // Gửi request tạo sản phẩm đến API
         console.log("Form values", values);
@@ -27,9 +28,12 @@ const ListVoucher: FC<any> = () => {
             onSuccess();
             setModalVisible(false);
         }
-
+        // form.resetFields()
     };
+
     const handleCancel = () => {
+        console.log('cancel');
+
         setModalVisible(false);
     };
     const confirm = async (id: number) => {
@@ -92,7 +96,7 @@ const ListVoucher: FC<any> = () => {
                 <Column
                     title="Action"
                     key="action"
-                    render={(_, record:any) => (<>
+                    render={(_, record: any) => (<>
                         <Space size="middle" >
                             <div style={{ cursor: "pointer" }}>
                                 <Button type="primary" onClick={() => {
@@ -123,6 +127,7 @@ const ListVoucher: FC<any> = () => {
                 />
             </Table>
             <VoucherModal
+                formV={(form: any) => setForm(form)}
                 visible={modalVisible}
                 onCreate={handleCreate}
                 onCancel={handleCancel}
