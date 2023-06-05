@@ -1,9 +1,9 @@
 
-import { Col, Rate, Row } from "antd";
+import { Col, Rate, Row, notification } from "antd";
 import style from "../../styles/restaurant/restaurant.module.scss";
 import Menu from "@/components/restaurant_owner/listMenu";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Order from "@/components/restaurant_owner/listOrder";
 import ProcessOrder from "@/components/restaurant_owner/listProcess";
 import Statictisc from "@/components/restaurant_owner/statictisc";
@@ -13,24 +13,60 @@ import RestaurentService from "@/service/restaurantService";
 import Category from "@/components/restaurant_owner/listCategory";
 import Voucher from "../voucher";
 import ListVoucher from "@/components/restaurant_owner/listVoucher";
+import { WebsocketContext } from "@/context/WebsocketContext";
+import axiosClient from "@/service/config/axiosInstance";
+import ProductService from "@/service/productService";
+import { resourceUsage } from "process";
+import { SmileOutlined } from "@ant-design/icons";
 
 
 function RestaurentOwner() {
     const router = useRouter()
+    const [listOrder, setListOrder] = useState([])
     const [nav, setNav] = useState<any>()
     const [dataInfo, setDataInfo] = useState({})
+    const productService = new ProductService
     const restaurantService = new RestaurentService
+    const socket = useContext(WebsocketContext)
+    useEffect(() => {
+        getOrderRestaurant()
+        info()
+        socket.on('connect', () => {
+            console.log('connection..');
+        })
+        socket.on('test', (data: any) => {
+            console.log('connection..', data);
+        })
+        socket.on('GetOrderRestaurant', (listOrder: any) => {
+            console.log('order', listOrder);
+            // listOrder && notification.open({
+            //     message: 'Have a new Order!',
+            //     icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+            // })
+            listOrder && setListOrder(listOrder)
+        })
+        return () => {
+            console.log('Unregistering Events...');
+            socket.off('connect');
+            socket.off('getOrderRestaurant');
+        };
+    }, [])
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
         if (!err) {
             setDataInfo(data)
         }
     }
+    const getOrderRestaurant = async () => {
+        let [data, err] = await productService.getOrderRestaurant()
+        if (!err) {
+            console.log('dsadas', data);
 
+            setListOrder(data)
+        }
+        return data
+    }
 
-    useEffect(() => {
-        info()
-    }, [])
     return (
         <>
             <div className={style.page}>
@@ -87,8 +123,8 @@ function RestaurentOwner() {
                             <Col flex="auto" >
                                 <div className={style.content}>
                                     {!nav && <Menu title='Menu' />}
-                                    {nav === 'nav1' && <Order title="Order"></Order>}
-                                    {nav === 'nav2' && <ProcessOrder title="Process Order" />}
+                                    {nav === 'nav1' && <Order title="Order" data={listOrder.filter((item: any) => item?.status.id <= 1)}></Order>}
+                                    {nav === 'nav2' && <ProcessOrder title="Process Order" data={listOrder.filter((item: any) => item?.status.id > 1)} />}
                                     {nav === 'nav3' && <Statictisc title="Statictisc" />}
                                     {nav === 'nav4' && <Profile data={dataInfo} />}
                                     {nav === 'nav5' && <Category />}

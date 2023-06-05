@@ -1,11 +1,23 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import style from "./style/processOrder.module.scss"
 import { Button, Col, Collapse, Divider, Popconfirm, Rate, Row, Space, message } from "antd";
 import clsx from "clsx";
 import { EnvironmentOutlined } from "@ant-design/icons";
-const ProcessOrder: FC<any> = ({ title }) => {
+import useToken from "@/pages/hook/useToken";
+import ProductService from "@/service/productService";
+import { updateOrder } from "./listOrder";
+const ProcessOrder: FC<any> = ({ title, data }) => {
     const { Panel } = Collapse;
-
+    const [role, setRole] = useState(0)
+    const [listOP, setListOP] = useState([])
+    const productService = new ProductService
+    useEffect(() => {
+        data && setListOP(data)
+    }, [data])
+    useEffect(() => {
+        setRole(useToken());
+        data && setListOP(data)
+    }, [])
     // Btn Delete
     const confirm = (e: any): void => {
         console.log(e);
@@ -16,26 +28,37 @@ const ProcessOrder: FC<any> = ({ title }) => {
         console.log(e);
         message.error('Click on No');
     };
-    const Header = (code: string, status: string, price: number) => (
+    const updateStatus = async (dataOP: any) => {
+        const dataUpdate: updateOrder = {
+            clientid: dataOP.user.id,
+            restaurantid: dataOP.restaurant.id,
+            statusid: Number(dataOP.status.id) + 1
+        }
+        let [data, err] = await productService.updateOrder(dataUpdate, dataOP.id)
+        if (!err) {
+            message.success("Accept Done~!")
+        }
+    }
+    const Header = (id: string, status: any, price: number, data: any) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
-            <Col><h3 style={{ margin: "0" }}>{code}</h3></Col>
+            <Col><h3 style={{ margin: "0" }}>{id}</h3></Col>
             <Col>
                 {/* <h3 style={{ margin: "0", fontWeight: "600", color: '#4C3D3D', padding: "2px 8px", borderRadius: "10px", backgroundColor: "#FFF7D4" }}> */}
-                <Button style={{ width: "100%", backgroundColor: false ? "greenyellow" : 'none' }} type='primary' disabled={true} >Order Successfuly</Button>
+                <Button style={{ position: "absolute", top: '0', transform: "translate(-50%,-50%)", backgroundColor: "#FFD95A", zIndex: 2 }} type='default' disabled={role != Number(status.role)} onClick={() => updateStatus(data)} >{status.name}</Button>
                 {/* </h3> */}
             </Col>
             <Col><h3 style={{ margin: "0", color: "#59CE8F" }}>${price}</h3></Col>
         </Row>
     )
 
-    const InforOrderer = (data: { name: string, address: string, note: string, phone: string }) => {
+    const InforOrderer = (data: { name: string, name_address: string, note: string, phone: string }) => {
         return (
             <>
                 <div className={style.info}>
-                    <h3><EnvironmentOutlined /> Main Boulevard, , Lahore, Punjab, Pakistan - 54000</h3>
-                    <p>Name: <span>Sơn</span></p>
-                    <p>Phone: <span>0987654321</span></p>
-                    <p>Note: <span>cô lô nhuê</span></p>
+                    <h3><EnvironmentOutlined />{data.name_address}</h3>
+                    <p>Name: <span>{data.name}</span></p>
+                    <p>Phone: <span>{data.phone}</span></p>
+                    <p>Note: <span>{data.note}</span></p>
                 </div>
             </>
         )
@@ -52,6 +75,17 @@ const ProcessOrder: FC<any> = ({ title }) => {
             </>
         )
     }
+    const getPrice = (data: any) => {
+
+        let subPrice = data.order_detail.reduce((total: number, item: any) => {
+
+            return total + item.product.sale_price ? (item.product.sale_price * item.quantity) : (item.product.price * item.quantity)
+        }, 0)
+        if (data.voucher) {
+            subPrice = subPrice * ((100 - data.voucher.discount) / 100)
+        }
+        return subPrice.toFixed(2)
+    }
     return (
         <>
             <div className={style.menu}>
@@ -64,143 +98,51 @@ const ProcessOrder: FC<any> = ({ title }) => {
                 </div>
                 <div className={style.list}>
                     <Space direction="vertical" style={{ width: '100%' }}>
+                        {listOP.map((item: any) => (
+                            <Collapse className={style.coll} style={{ width: "100%", position: 'relative' }}  >
+                                <Panel header={Header('#' + item.id, item.status, getPrice(item), item)} key="1"  >
+                                    {InforOrderer(item.user_address)}
+                                    {item.driver && InforDriver(item.driver)}
+                                    {item.order_detail.map((listProduct: any) => (
+                                        <div className={style.item}>
+                                            <Divider />
 
-                        <Collapse className={style.coll} collapsible="header" style={{ width: "100%" }}  >
-                            <Panel header={Header('#1234', 'Finding driver', 1234,)} key="1"  >
-                                {InforOrderer({ name: 'Thằng Sơn', address: "Hoài Đức", note: "nhà to nhất", phone: "0987654321" })}
-                                {InforDriver({ name: 'Thằng Sơn', phone: "0987654321", star: 0 })}
-                                <div className={style.item}>
+                                            <Row>
+                                                <Col flex={'auto'}>
+                                                    <div style={{ display: 'flex' }}>
+                                                        <div className={style.img}>
+                                                            <img src={listProduct.product.images} alt="coca" width={100} />
+                                                        </div>
+                                                        <div>
+                                                            <div className={style.name}>{listProduct.product.name}</div>
+                                                            {listProduct.product.sale_price ? (
+                                                                <div className={style.price}>
+                                                                    <span className={style.sale}>${listProduct.product.price}</span>
+                                                                    ${listProduct.product.sale_price}
+                                                                </div>
+                                                            ) : (
+                                                                <div className={style.price} style={{ color: "yellowgreen" }}>
+                                                                    ${listProduct.product.price}
+
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                    </div>
+
+                                                </Col>
+
+                                            </Row>
+
+                                        </div>
+                                    ))}
+
                                     <Divider />
 
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
+                                </Panel>
 
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <Divider />
-
-
-                            </Panel>
-
-                        </Collapse>
-                        <Collapse className={style.coll} collapsible="header" style={{ width: "100%" }}  >
-                            <Panel header={Header('#1234', 'Driving', 1234)} key="1"  >
-                                <div className={style.item}>
-                                    {InforOrderer({ name: 'Thằng Sơn', address: "Hoài Đức", note: "nhà to nhất", phone: "0987654321" })}
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                    <Divider />
-                                </div>
-
-                            </Panel>
-
-                        </Collapse>
+                            </Collapse>
+                        ))}
 
                     </Space>
 

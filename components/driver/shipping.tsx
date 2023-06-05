@@ -5,53 +5,54 @@ import Map, { GeolocateControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, message } from 'antd';
-import { EnvironmentOutlined } from '@ant-design/icons';
+import { Alert, Button, Col, Collapse, Divider, Popconfirm, Result, Row, Space, message } from 'antd';
+import { EnvironmentOutlined, SmileOutlined } from '@ant-design/icons';
 import RestaurentService from '@/service/restaurantService';
 import { WebsocketContext } from '@/context/WebsocketContext';
 import ProductService from '@/service/productService';
 import { updateOrder } from '../restaurant_owner/listOrder';
 import { useRouter } from 'next/router';
 
-
-function DriverPage() {
+function DriverShippingPage() {
     const { Panel } = Collapse;
+    const router = useRouter()
     const mapContainer: any = useRef(null);
     const map: any = useRef(null);
     const [lng, setLng] = useState(-70.9);
     const [lat, setLat] = useState(42.35);
+    const [with2, setWith2] = useState(0);
     const [zoom, setZoom] = useState(9);
-    const [acpOrder, setAcpOrder]: any = useState(null);
+    const [acpOrder, setAcpOrder]: any = useState(true);
     const socket = useContext(WebsocketContext)
     const productService = new ProductService
+    const [result, setResult] = useState(false)
     const [listOrder, setListOrder] = useState([])
-    const router = useRouter()
-    useEffect(() => {
-        getOrderDriver()
-        socket.on('connect', () => {
-            console.log('connection..');
-        })
-        socket.on('test', (data: any) => {
-            console.log('connection..', data);
-        })
-        socket.on('GetOrderDriver', (listOrder: any) => {
-            console.log('driver', listOrder);
-            listOrder && setListOrder(listOrder)
-        })
-        return () => {
-            console.log('Unregistering Events...');
-            socket.off('connect');
-            socket.off('GetOrderDriver');
-        };
-    }, [])
-    const getOrderDriver = async () => {
-        let [data, err] = await productService.getOrderDriver()
-        if (!err) {
-            console.log('dsadas', data);
-            setListOrder(data)
-        }
-        return data
-    }
+    // useEffect(() => {
+    //     getOrderDriver()
+    //     socket.on('connect', () => {
+    //         console.log('connection..');
+    //     })
+    //     socket.on('test', (data: any) => {
+    //         console.log('connection..', data);
+    //     })
+    //     socket.on('GetOrderDriver', (listOrder: any) => {
+    //         console.log('driver', listOrder);
+    //         listOrder && setListOrder(listOrder)
+    //     })
+    //     return () => {
+    //         console.log('Unregistering Events...');
+    //         socket.off('connect');
+    //         socket.off('GetOrderDriver');
+    //     };
+    // }, [])
+    // const getOrderDriver = async () => {
+    //     let [data, err] = await productService.getOrderDriver()
+    //     if (!err) {
+    //         console.log('dsadas', data);
+    //         setListOrder(data)
+    //     }
+    //     return data
+    // }
 
     const confirm = (e: any): void => {
         console.log(e);
@@ -68,26 +69,20 @@ function DriverPage() {
     const getDetail = async () => {
         let [data, err] = await productService.getDetailOrderDriver()
         if (!err) {
+            if (data.length == 0) {
+                message.warning("You need chose Order")
+                router.push('/driver')
+            }
+            console.log('kist', data);
+
             setListOrder(data)
         }
     }
 
-
     useEffect(() => {
-        if (acpOrder) {
-            socket.off('GetOrderDriver');
-            getDetail()
-            // socket.on('getDetailOrderFindDriver', () => { })
-        } else {
-            socket.on('GetOrderDriver', () => {
-
-            });
-        }
-        return () => {
-            socket.off('connect');
-            socket.off('GetOrderDriver');
-        }
-    }, [acpOrder]);
+        getDetail()
+        setWith2(window.innerWidth)
+    }, []);
     const Header = (code: string, price: number) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
             <Col><h3 style={{ margin: "0" }}>{code}</h3></Col>
@@ -119,16 +114,18 @@ function DriverPage() {
         )
     }
     const handleAccept = async (dataO: any) => {
+        // setAcpOrder(dataO.id)
+        console.log("datao", listOrder);
+
         const dataUpdate: updateOrder = {
             clientid: dataO.user.id,
             restaurantid: dataO.restaurant.id,
-            // driverid: dataO.restaurant.id,
-            statusid: 4
+            statusid: 5
         }
         let [data, err] = await productService.updateOrder(dataUpdate, dataO.id)
         if (!err) {
-            router.push('/driver/shipping')
-            message.success("Accept Done~!")
+            message.success("Thank you very much!")
+            setResult(true)
         }
     }
     const getPrice = (data: any) => {
@@ -144,6 +141,20 @@ function DriverPage() {
     }
     return (
         <>
+            {result && <div style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, zIndex: 20, backgroundColor: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Result
+                    status="success"
+                    title={" Successfully delivered!"}
+                    subTitle="have a nice shipping !"
+                    extra={[
+                        <Button type="primary" key="console" onClick={() => router.push('/driver')}>
+                            Next Order
+                        </Button>
+                        // <Button key="buy"></Button>,
+                    ]}
+                />
+            </div>}
+
             <Head>
                 <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
             </Head>
@@ -151,7 +162,7 @@ function DriverPage() {
                 <Row justify={"center"}>
 
                     <Col md={12} sm={24} span={24}>
-                        <div className={style.map} style={{ width: "100%", maxWidth: "1440px", aspectRatio: acpOrder && (window.innerWidth <= 768) ? '9/16' : '16/9' }} >
+                        <div className={style.map} style={{ width: "100%", maxWidth: "1440px", aspectRatio: acpOrder && (with2 <= 768) ? '9/16' : '16/9' }} >
                             <Map
                                 style={{ width: '100%', height: '100%' }}
                                 mapboxAccessToken="pk.eyJ1IjoidHJpZGMiLCJhIjoiY2xobm4xdXh3MW16azNnbHJvcHRwYmRodiJ9.WK8ZUq8s5DqkBdqzj20a6Q"
@@ -169,7 +180,7 @@ function DriverPage() {
                             </Map>
                         </div>
                         {acpOrder && < div >
-                            <Button style={{ width: "100%", margin: "10px 0", backgroundColor: false ? "greenyellow" : 'none', color: "#000" }} type='primary' disabled={true} >Order Successfuly</Button>
+                            <Button style={{ width: "100%", margin: "10px 0", backgroundColor: "greenyellow", color: "#000" }} type='primary' onClick={() => handleAccept(listOrder[0])} >Order Successfuly</Button>
                         </div>}
                     </Col>
                     <Col md={!acpOrder ? 12 : 24} sm={24} span={24} >
@@ -253,4 +264,4 @@ function DriverPage() {
     );
 }
 
-export default DriverPage;
+export default DriverShippingPage;

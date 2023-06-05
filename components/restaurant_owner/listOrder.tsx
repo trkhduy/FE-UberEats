@@ -1,10 +1,28 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import style from "./style/listOrder.module.scss"
 import { Button, Col, Collapse, Divider, Popconfirm, Row, Space, message } from "antd";
 import clsx from "clsx";
 import { EnvironmentOutlined } from "@ant-design/icons";
-const Order: FC<any> = ({ title }) => {
+import Voucher from "@/pages/voucher";
+import ProductService from "@/service/productService";
+
+export interface updateOrder {
+    statusid: number;
+    driverid?: number;
+    clientid: number;
+    restaurantid: number;
+}
+
+const Order: FC<any> = ({ title, data }: { title: string, data: [] }) => {
     const { Panel } = Collapse;
+    const [listO, setListO] = useState([])
+    const productService = new ProductService
+    useEffect(() => {
+        data && setListO(data)
+    }, [data])
+    useEffect(() => {
+        data && setListO(data)
+    }, [])
 
     // Btn Delete
     const confirm = (e: any): void => {
@@ -13,8 +31,6 @@ const Order: FC<any> = ({ title }) => {
     };
 
     const cancel = (e: any): void => {
-        console.log(e);
-        message.error('Click on No');
     };
     const Header = (code: string, price: number) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
@@ -23,17 +39,41 @@ const Order: FC<any> = ({ title }) => {
         </Row>
     )
 
-    const InforOrderer = (data: { name: string, address: string, note: string, phone: string }) => {
+    const InforOrderer = (data: { name: string, name_address: string, note: string, phone: string }) => {
         return (
             <>
                 <div className={style.info}>
-                    <h3><EnvironmentOutlined /> Main Boulevard, , Lahore, Punjab, Pakistan - 54000</h3>
-                    <p>Name: <span>Sơn</span></p>
-                    <p>Phone: <span>0987654321</span></p>
-                    <p>Note: <span>cô lô nhuê</span></p>
+                    <h3><EnvironmentOutlined />{data.name_address}</h3>
+                    <p>Name: <span>{data.name}</span></p>
+                    <p>Phone: <span>{data.phone}</span></p>
+                    <p>Note: <span>{data.note}</span></p>
                 </div>
             </>
         )
+    }
+
+    // const [message, context] = message()
+    const getPrice = (data: any) => {
+
+        let subPrice = data.order_detail.reduce((total: number, item: any) => {
+
+            return total + item.product.sale_price ? (item.product.sale_price * item.quantity) : (item.product.price * item.quantity)
+        }, 0)
+        if (data.voucher) {
+            subPrice = subPrice * ((100 - data.voucher.discount) / 100)
+        }
+        return subPrice.toFixed(2)
+    }
+    const handleAccept = async (dataO: any) => {
+        const dataUpdate: updateOrder = {
+            clientid: dataO.user.id,
+            restaurantid: dataO.restaurant.id,
+            statusid: 2
+        }
+        let [data, err] = await productService.updateOrder(dataUpdate, dataO.id)
+        if (!err) {
+            message.success("Accept Done~!")
+        }
     }
     return (
         <>
@@ -47,168 +87,65 @@ const Order: FC<any> = ({ title }) => {
                 </div>
                 <div className={style.list}>
                     <Space direction="vertical" style={{ width: '100%' }}>
+                        {listO.map((item: any) =>
+                            // debugger
+                            <Collapse className={style.coll} collapsible="header" style={{ width: "100%" }} key={item.id} >
+                                <Panel header={Header('#' + item.id, getPrice(item))} key={item.id}  >
+                                    {InforOrderer(item.user_address)}
+                                    {item.order_detail.map((listProduct: any) => (
+                                        <div className={style.item}>
+                                            <Divider />
 
-                        <Collapse className={style.coll} collapsible="header" style={{ width: "100%" }}  >
-                            <Panel header={Header('#1234', 1234)} key="1"  >
-                                {InforOrderer({ name: 'Thằng Sơn', address: "Hoài Đức", note: "nhà to nhất", phone: "0987654321" })}
-                                <div className={style.item}>
+                                            <Row>
+                                                <Col flex={'auto'}>
+                                                    <div style={{ display: 'flex' }}>
+                                                        <div className={style.img}>
+                                                            <img src={listProduct.product.images} alt="coca" width={100} />
+                                                        </div>
+                                                        <div>
+                                                            <div className={style.name}>{listProduct.product.name}</div>
+                                                            {listProduct.product.sale_price ? (
+                                                                <div className={style.price}>
+                                                                    <span className={style.sale}>${listProduct.product.price}</span>
+                                                                    ${listProduct.product.sale_price}
+                                                                </div>
+                                                            ) : (
+                                                                <div className={style.price} style={{ color: "yellowgreen" }}>
+                                                                    ${listProduct.product.price}
+
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                    </div>
+
+                                                </Col>
+
+                                            </Row>
+
+                                        </div>
+                                    ))}
+
                                     <Divider />
 
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
+                                    <div className={style.btn}>
+                                        <Popconfirm
+                                            title="Delete the task"
+                                            description="Are you sure to delete this task?"
+                                            onConfirm={() => confirm(item.id)}
+                                            onCancel={cancel}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <Button type="primary" danger>Deny</Button>
+                                        </Popconfirm>
+                                        <Button type="primary" style={{ backgroundColor: "#ABC270", marginLeft: "12px" }} onClick={() => handleAccept(item)} >Accept</Button>
+                                    </div>
+                                </Panel>
 
-                                            </div>
+                            </Collapse>
+                        )}
 
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <div className={style.item}>
-                                    <Divider />
-
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                </div>
-                                <Divider />
-
-                                <div className={style.btn}>
-                                    <Popconfirm
-                                        title="Delete the task"
-                                        description="Are you sure to delete this task?"
-                                        onConfirm={confirm}
-                                        onCancel={cancel}
-                                        okText="Yes"
-                                        cancelText="No"
-                                    >
-                                        <Button type="primary" danger>Deny</Button>
-                                    </Popconfirm>
-                                    <Button type="primary" style={{ backgroundColor: "#ABC270", color: "#Fff", marginLeft: "12px" }} >Accept</Button>
-
-                                </div>
-                            </Panel>
-
-                        </Collapse>
-                        <Collapse className={style.coll} collapsible="header" style={{ width: "100%" }}  >
-                            <Panel header={Header('#1234', 1234)} key="1"  >
-                                <div className={style.item}>
-                                    {InforOrderer({ name: 'Thằng Sơn', address: "Hoài Đức", note: "nhà to nhất", phone: "0987654321" })}
-                                    <Row>
-                                        <Col flex={'auto'}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div className={style.img}>
-                                                    <img src="https://marketplace.foodotawp.com/wp-content/uploads/2021/04/oreo-shake-150x150.jpg" alt="coca" width={100} />
-                                                </div>
-                                                <div>
-                                                    <div className={style.name}>Oreo Milk Shake</div>
-                                                    <div className={style.price}>
-                                                        <span className={style.sale}>$399.00</span>
-                                                        $290.00
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </Col>
-
-                                    </Row>
-
-                                    <Divider />
-                                </div>
-                                <div className={style.btn}>
-                                    <Popconfirm
-                                        title="Delete the task"
-                                        description="Are you sure to delete this task?"
-                                        onConfirm={confirm}
-                                        onCancel={cancel}
-                                        okText="Yes"
-                                        cancelText="No"
-                                    >
-                                        <Button type="primary" danger>Deny</Button>
-                                    </Popconfirm>
-                                    <Button type="primary" style={{ backgroundColor: "#ABC270", color: "#Fff", marginLeft: "12px" }} >Accept</Button>
-
-                                </div>
-                            </Panel>
-
-                        </Collapse>
 
                     </Space>
 

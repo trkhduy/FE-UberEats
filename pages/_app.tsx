@@ -10,6 +10,7 @@ import { message } from 'antd'
 import useToken from './hook/useToken'
 import { Provider } from 'react-redux'
 import store from '@/redux/store'
+import { WebsocketProvider, socket } from '@/context/WebsocketContext'
 
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -68,7 +69,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Layout>
         {contextHolder}
-        <Component {...pageProps} />
+        <WebsocketProvider value={socket}>
+          <Component {...pageProps} />
+        </WebsocketProvider>
         {router.route.includes('/driver') && <LayoutDriver />}
       </Layout>
     </Provider>

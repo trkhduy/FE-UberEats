@@ -6,7 +6,7 @@ import RestaurentService from "@/service/restaurantService";
 const { Option } = Select;
 
 const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
-    const [form] = Form.useForm();
+    const [formV] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const restaurantService = new RestaurentService
     useEffect(() => {
@@ -17,7 +17,7 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
         if (voucher) {
             // form.setFieldsValue(voucher);
         } else {
-            form.resetFields()
+            formV.resetFields()
         }
     }, [voucher]);
 
@@ -35,7 +35,7 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
         onCreate(values, () => {
             console.log(values);
             setLoading(false);
-            !voucher && form.resetFields();
+            !voucher && formV.resetFields();
         });
 
 
@@ -65,17 +65,17 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher }) => {
             title={!voucher ? "Create Voucher" : "Edit Voucher"}
             okText={loading ? !voucher ? "Creating .." : "Editing ..." : !voucher ? "Create " : "Edit "}
             cancelText="Cancel"
-            onCancel={() => {
+            onCancel={async () => {
                 onCancel();
                 setLoading(false)
-                { !voucher && form.resetFields(); }
+                await formV.resetFields()
                 return true
             }}
-            onOk={() => form.submit()}
+            onOk={() => formV.submit()}
             confirmLoading={loading}
             destroyOnClose
         >
-            <Form layout="vertical" form={form} initialValues={voucher} onFinish={onFinish}>
+            <Form layout="vertical" form={formV} initialValues={voucher} onFinish={onFinish}>
                 <Form.Item
                     name="name"
                     label="Name"
