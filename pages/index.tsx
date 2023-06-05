@@ -7,7 +7,12 @@ import HomeClient from '@/components/home_client/home'
 
 const inter = Inter({ subsets: ['latin'] })
 
+
 export default function Home() {
+
+
+
+
   return (
     <>
       <Head>

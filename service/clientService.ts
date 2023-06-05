@@ -67,4 +67,31 @@ export default class ClientService {
             return [null, error]
         }
     }
+    // Voucher
+    async getRestaurant() {
+        try {
+            const respone = await axiosClient.get('/user/restaurant');
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
+
+    async getAllVocher(keyword: string) {
+        let url = keyword ? '?' + keyword : ''
+        try {
+            const respone = await axiosClient.get('/voucher' + url);
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
+    async getDetailVocher(code: string) {
+        try {
+            const respone = await axiosClient.get(`/voucher/detailVoucher/${code}`);
+            return [respone.data, null]
+        } catch (error) {
+            return [null, error]
+        }
+    }
 }
