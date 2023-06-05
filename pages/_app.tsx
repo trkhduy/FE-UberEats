@@ -10,6 +10,7 @@ import { message } from 'antd'
 import useToken from './hook/useToken'
 import { Provider } from 'react-redux'
 import store from '@/redux/store'
+import { WebsocketProvider, socket } from '@/context/WebsocketContext'
 
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -52,19 +53,13 @@ export default function App({ Component, pageProps }: AppProps) {
       return router.route.includes('/driver')
     }
     return router.route.includes('/restaurantowner')
-
-
-
-
   }
-
   const error = (message = 'Unauthorize') => {
     messageApi.open({
       type: 'error',
       content: message,
     });
   };
-
   useEffect(() => {
     const role = useToken()
 
@@ -86,17 +81,13 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Layout>
         {contextHolder}
+        <WebsocketProvider value={socket}>
+          <Component {...pageProps} />
+        </WebsocketProvider>
         {loading && <div style={{ position: 'fixed', zIndex: "100000", backgroundColor: "#cccccc7a", top: "0", left: 0, width: "100%", height: '100vh', display: "flex", alignItems: "center", justifyContent: 'center' }}>
-          {/* <div className={style.custom_loader}></div> */}
-          {/* <div sty></div> */}
-        </div >}
-        <Component {...pageProps} />
         {router.route.includes('/driver') && <LayoutDriver />}
       </Layout>
     </Provider>
-
-
-
   )
 
 }

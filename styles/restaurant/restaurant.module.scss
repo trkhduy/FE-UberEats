@@ -87,7 +87,9 @@
     //body 
     .body {
         background-color: #f2f2f2;
-        height: 2000px;
+        // height: 2000px;
+        min-height: 1000px;
+        transition: 0.5s;
 
         .container {
             width: 80%;

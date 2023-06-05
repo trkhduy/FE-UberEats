@@ -5,6 +5,7 @@ import RestaurentService from "@/service/restaurantService";
 
 const { Option } = Select;
 
+
 const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
         if (voucher) {
             // form.setFieldsValue(voucher);
         } else {
-            form.resetFields()
+            formV.resetFields()
         }
     }, [voucher]);
     useEffect(() => {
@@ -65,6 +66,7 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
         onCreate(values, () => {
             console.log(values);
             setLoading(false);
+
             form.resetFields();
         });
 
@@ -95,19 +97,20 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
             title={!voucher ? "Create Voucher" : "Edit Voucher"}
             okText={loading ? !voucher ? "Creating .." : "Editing ..." : !voucher ? "Create " : "Edit "}
             cancelText="Cancel"
-            onCancel={() => {
+            onCancel={async () => {
                 onCancel();
                 console.log('reset');
-
                 setLoading(false)
                 form.resetFields()
                 return true
             }}
-            onOk={() => form.submit()}
+            onOk={() => formV.submit()}
             confirmLoading={loading}
             destroyOnClose
         >
+
             <Form layout="vertical" form={form} initialValues={{ ...voucher, conditions: Number(voucher?.conditions) }} onFinish={onFinish}>
+
                 <Form.Item
                     name="name"
                     label="Name"
