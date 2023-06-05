@@ -10,9 +10,6 @@ import ClientService from '@/service/clientService'
 import UserService from '@/service/userService'
 import CartService from '@/service/cartService'
 
-// sessionStorage.getItem('cart')
-// sessionStorage.getItem('coupon');
-// sessionStorage.getItem('totalCart');
 const Checkout = () => {
     const clientService = new ClientService;
     const userService = new UserService;
@@ -31,7 +28,7 @@ const Checkout = () => {
         setCoupon(sessionStorage.getItem('coupon'));
         setTotalCart(sessionStorage.getItem('totalCart'));
         getCart()
-    }, [cart])
+    }, [])
     const onFormLayoutChange = ({ size }: { size: SizeType }) => {
         setComponentSize(size);
     };

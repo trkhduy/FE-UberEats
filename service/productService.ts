@@ -1,5 +1,6 @@
 import { File } from "buffer";
 import axiosClient from "./config/axiosInstance";
+import { AnyObject } from "antd/es/table/Table";
 
 
 
@@ -9,7 +10,7 @@ function getFormData(object: any) {
     return formData;
 }
 export default class ProductService {
-     
+
     async getOrderRestaurant() {
         return await axiosClient.get('/order/getByRestaurant')
             .then((data: any) => {
@@ -33,6 +34,13 @@ export default class ProductService {
     }
     async getOrderClient() {
         return await axiosClient.get('/order/getByClient')
+            .then((data: any) => {
+                return [data.data, null]
+            })
+            .catch((err) => [null, err])
+    }
+    async createOrder(data: AnyObject) {
+        return await axiosClient.post('/order/', data)
             .then((data: any) => {
                 return [data.data, null]
             })
