@@ -29,6 +29,7 @@ const refreshtoken = async () => {
 }
 // request parse
 axiosClient.interceptors.request.use(async (config) => {
+    localStorage.setItem('loading', 'true')
     if (Number(config.url?.indexOf('/login')) >= 0 || Number(config.url?.indexOf('refresh')) >= 0) {
         return config
     }
@@ -53,6 +54,9 @@ axiosClient.interceptors.request.use(async (config) => {
 //response
 axiosClient.interceptors.response.use((response: any) => {
     console.log('res', response);
+    setTimeout(() => {
+        localStorage.setItem('loading', 'false');
+    }, 3000);
 
     return response
 }, (err) => {

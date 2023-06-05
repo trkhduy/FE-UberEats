@@ -10,20 +10,28 @@ import ClientService from '@/service/clientService'
 import UserService from '@/service/userService'
 import CartService from '@/service/cartService'
 
-
+// sessionStorage.getItem('cart')
+// sessionStorage.getItem('coupon');
+// sessionStorage.getItem('totalCart');
 const Checkout = () => {
     const clientService = new ClientService;
     const userService = new UserService;
     const cartService = new CartService;
-    const sessionCart = sessionStorage.getItem('cart');
+    const [sessionCart, setSessionCart]: any = useState();
+    const [coupon, setCoupon]: any = useState();
     const [cart, setCart] = useState([]);
     const { TextArea } = Input;
     const [form] = Form.useForm();
     const [componentSize, setComponentSize] = useState<SizeType | 'default'>('default');
     const [disabled, setDisabled] = useState(false)
     const [dataProfile, setDataProfile]: any = useState([])
-    const totalCart: any = sessionStorage.getItem('totalCart');
-
+    const [totalCart, setTotalCart]: any = useState();
+    useEffect(() => {
+        setSessionCart(sessionStorage.getItem('cart'));
+        setCoupon(sessionStorage.getItem('coupon'));
+        setTotalCart(sessionStorage.getItem('totalCart'));
+        getCart()
+    }, [cart])
     const onFormLayoutChange = ({ size }: { size: SizeType }) => {
         setComponentSize(size);
     };
@@ -136,17 +144,18 @@ const Checkout = () => {
 
                         <Col xl={8} md={12} sm={24} xs={24}>
                             <div className={style.shipment_method}>
-                                <h5 style={{ color: '#333', marginBottom: '20px' }}>Shipment Method</h5>
+                                <h5 style={{ color: '#333', marginBottom: '20px' }}>Payment Method</h5>
                                 <Radio.Group onChange={onChange} value={value}>
                                     <Space direction="vertical">
                                         <Radio value={1}>Payment by e-wallet</Radio>
+                                        <Radio value={2}>Ship COD</Radio>
                                     </Space>
                                 </Radio.Group>
                             </div>
                         </Col>
                         <Col xl={8} md={18} sm={24} xs={24}>
                             <div className={style.order_item}>
-                                <h5 style={{ color: '#333', marginBottom: '20px' }}>Your Order(5 items)</h5>
+                                <h5 style={{ color: '#333', marginBottom: '20px' }}>Your Order</h5>
                                 {cart && cart.length > 0 ? cart.map((item: any, i) => {
                                     return (
                                         <div className={style.items}>
@@ -183,7 +192,7 @@ const Checkout = () => {
                                 <div className={style.apply_dicount}>
                                     <Row align={'middle'} justify={'space-between'}>
                                         <Col xl={18} md={18} sm={18} xs={24} >
-                                            <Input placeholder='Enter your discount' className={style.input_form} />
+                                            <Input placeholder='Enter your discount' value={coupon} className={style.input_form} />
                                         </Col>
                                         <Col xl={6} md={6} sm={6} xs={24} className={style.implement}>
                                             <Link href={''} className={style.btn_apply}>

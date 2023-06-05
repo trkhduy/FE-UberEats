@@ -5,22 +5,26 @@ import clsx from 'clsx';
 import style from './style/cart.module.scss'
 import C_product from '@/components/carousel_product/c_product';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CartService from '@/service/cartService';
 import { useDispatch } from 'react-redux';
 import { fetchCartCount } from '@/redux/reducer/cartReducer';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { useRouter } from 'next/router';
+import ClientService from '@/service/clientService';
 function Cart() {
     const router = useRouter()
-    const [dataCart, setDataCart] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [total, setTotal] = useState(0)
-    const dispatch = useDispatch()
-    const [checkRes, setCheckRes]: any = useState(null)
-    const [listcheckRes, setListCheckRes]: any = useState([])
-    const ship = 2.5
-    const cartService = new CartService
+    const [dataCart, setDataCart] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState(0);
+    const [voucher, setVoucher]: any = useState();
+    const dispatch = useDispatch();
+    const [checkRes, setCheckRes]: any = useState(null);
+    const [listcheckRes, setListCheckRes]: any = useState([]);
+    const ship = 2.5;
+    const cartService = new CartService;
+    const clientService = new ClientService;
+    const coupon: any = useRef()
     async function quantity(action: any, id_p: any, item: any) {
         const id: any = document.getElementById('ip_number' + id_p)
         if (action == '-') {
@@ -41,6 +45,23 @@ function Cart() {
         }
         setLoading(false)
     }
+    const getVoucher = async (code: string) => {
+
+        let [voucher, err] = await clientService.getDetailVocher(code)
+        if (voucher) {
+            setVoucher(voucher)
+            message.success('Added coupon sucessfuly!')
+        }
+        if (!voucher) {
+            message.error("not found coupon")
+        }
+    }
+    const applyCoupon = async () => {
+        let valueCou = coupon.current.value;
+        getVoucher(valueCou);
+        setTotal(totalPrice(dataCart))
+    }
+
     const getCart = async () => {
         let [data, err] = await cartService.getAllCart()
         if (!err) {
@@ -70,9 +91,15 @@ function Cart() {
     }
     const totalPrice = (data: any[]) => {
         data = data.filter(item => listcheckRes.includes(item.id))
-        return data.reduce((total: number, item: any) => {
+        let total = data.reduce((total: number, item: any) => {
             return total + subPrice(item)
         }, 0)
+        if (voucher) {
+            console.log('voucher.discount', voucher.discount);
+            return total * (1 - (voucher.discount / 100))
+        }
+
+        return total
     }
 
     const onChange = (e: any, id: number, resId: number) => {
@@ -91,6 +118,9 @@ function Cart() {
     const saveCart = () => {
         sessionStorage.setItem('cart', JSON.stringify(listcheckRes));
         sessionStorage.setItem('totalCart', JSON.stringify(total));
+        if (voucher) {
+            sessionStorage.setItem('coupon', JSON.stringify(voucher.code));
+        }
         router.push('/checkout')
     }
     useEffect(() => {
@@ -111,9 +141,7 @@ function Cart() {
                 </div>
             </div>
             <div className={style.cart}>
-                {loading && <div style={{ position: 'fixed', zIndex: "100000", backgroundColor: "#cccccc7a", top: "0", left: 0, width: "100%", height: '100vh', display: "flex", alignItems: "center", justifyContent: 'center' }}>
-                    <div className={style.custom_loader}></div>
-                </div >}
+
                 <Row>
                     <Col lg={16} span={24}>
                         <div className={clsx(style.list, 'pe-lg-3 pe-0')}>
@@ -155,8 +183,8 @@ function Cart() {
                             <Row justify={'space-between'} align={'middle'}>
                                 <Col>
                                     <div className={style.coupon}>
-                                        <input type={'text'} placeholder="Coupon Code" />
-                                        <a id="" className="btn btn-primary" href="#" role="button">Apply Coupon</a>
+                                        <input type={'text'} ref={coupon} placeholder="Coupon Code" />
+                                        <a id="" className="btn btn-primary" onClick={applyCoupon} role="button">Apply Coupon</a>
                                     </div>
                                 </Col>
                                 <Col>

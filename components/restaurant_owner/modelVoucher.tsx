@@ -8,7 +8,20 @@ const { Option } = Select;
 const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const restaurantService = new RestaurentService
+    const restaurantService = new RestaurentService;
+    const [randomString, setRandomString] = useState('');
+    const generateRandomString = () => {
+        const length = 10; // Độ dài chuỗi ngẫu nhiên mong muốn
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters.charAt(randomIndex);
+        }
+
+        setRandomString(result);
+    };
     formV = form
     useEffect(() => {
         // Nếu Voucher đang được truyền vào,
@@ -36,6 +49,10 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
 
 
     const onFinish = async (values: any) => {
+        generateRandomString();
+        values.code = randomString;
+        console.log('update', values);
+
         setLoading(true);
         if (typeof values.images === 'string') {
             delete values.images
@@ -118,6 +135,18 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
                     ]}
                 >
                     <InputNumber style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
+                    name="quantity"
+                    label="Quantity available"
+                >
+                    <InputNumber style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
+                    name="code"
+                    style={{ display: 'none' }}
+                >
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     name="images"

@@ -15,7 +15,25 @@ import store from '@/redux/store'
 export default function App({ Component, pageProps }: AppProps) {
   // const { store } = wrapper.useWrappedStore(pageProps);
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    const handleStorageChange = (event: any) => {
+      if (event.key === 'loading') {
+        const localStorageLoading = localStorage.getItem('loading');
+        console.log('localStorage');
 
+        setLoading(JSON.parse(localStorageLoading as string));
+      }
+    };
+
+    // Thêm sự kiện lắng nghe storage của trình duyệt
+    window.addEventListener('storage', handleStorageChange);
+
+    // Hủy bỏ sự kiện lắng nghe khi component bị unmount
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [])
   // const screenRole = {
   //   1: ['/driver', '/restaurantowner'], //sẽ bắt loại trừ 2 trường hợp này
   //   2: ['/driver'],
@@ -68,6 +86,10 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Layout>
         {contextHolder}
+        {loading && <div style={{ position: 'fixed', zIndex: "100000", backgroundColor: "#cccccc7a", top: "0", left: 0, width: "100%", height: '100vh', display: "flex", alignItems: "center", justifyContent: 'center' }}>
+          {/* <div className={style.custom_loader}></div> */}
+          {/* <div sty></div> */}
+        </div >}
         <Component {...pageProps} />
         {router.route.includes('/driver') && <LayoutDriver />}
       </Layout>
