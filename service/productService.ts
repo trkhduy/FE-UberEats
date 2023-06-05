@@ -9,7 +9,7 @@ function getFormData(object: any) {
     return formData;
 }
 export default class ProductService {
-     
+
     async getOrderRestaurant() {
         return await axiosClient.get('/order/getByRestaurant')
             .then((data: any) => {
@@ -33,6 +33,20 @@ export default class ProductService {
     }
     async getOrderClient() {
         return await axiosClient.get('/order/getByClient')
+            .then((data: any) => {
+                return [data.data, null]
+            })
+            .catch((err) => [null, err])
+    }
+    async createOrder(data: any) {
+        return await axiosClient.post('/order', data)
+            .then((data: any) => {
+                return [data.data, null]
+            })
+            .catch((err) => [null, err])
+    }
+    async createOrderDetail(data: any) {
+        return await axiosClient.post('/orderdetail', data)
             .then((data: any) => {
                 return [data.data, null]
             })

@@ -1,4 +1,3 @@
-
 import Head from 'next/head';
 import style from './style/home.module.scss';
 import RestaurentService from '@/service/restaurantService';
@@ -6,7 +5,7 @@ import { WebsocketContext } from '@/context/WebsocketContext';
 import ProductService from '@/service/productService';
 import { updateOrder } from '../restaurant_owner/listOrder';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState, useMemo,useContext } from 'react';
+import { useEffect, useRef, useState, useMemo, useContext } from 'react';
 import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, message } from 'antd';
 import { EnvironmentOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoadScript, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
@@ -38,6 +37,21 @@ function DriverPage() {
             socket.off('GetOrderDriver');
         };
     }, [])
+    useEffect(() => {
+        if (acpOrder) {
+            socket.off('GetOrderDriver');
+            getDetail()
+            // socket.on('getDetailOrderFindDriver', () => { })
+        } else {
+            socket.on('GetOrderDriver', () => {
+
+            });
+        }
+        return () => {
+            socket.off('connect');
+            socket.off('GetOrderDriver');
+        }
+    }, [acpOrder]);
     const getOrderDriver = async () => {
         let [data, err] = await productService.getOrderDriver()
         if (!err) {
@@ -112,21 +126,7 @@ function DriverPage() {
         calculateRoute()
     }
 
-    useEffect(() => {
-        if (acpOrder) {
-            socket.off('GetOrderDriver');
-            getDetail()
-            // socket.on('getDetailOrderFindDriver', () => { })
-        } else {
-            socket.on('GetOrderDriver', () => {
 
-            });
-        }
-        return () => {
-            socket.off('connect');
-            socket.off('GetOrderDriver');
-        }
-    }, [acpOrder]);
 
     const Header = (code: string, price: number) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
