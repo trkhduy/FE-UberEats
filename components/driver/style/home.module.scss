@@ -1,5 +1,6 @@
 .driver {
     padding: 40px 12px;
+    margin-top: 67px;
 
     .listOrder {
         width: 100%;
@@ -112,6 +113,31 @@
         //     height: 50vh;
         // }
         max-height: calc(100vh - 100px);
+        position: relative;
+
+        .backTo {
+            position: absolute;
+            bottom: 15%;
+            right: 2%;
+            background-color: #fff;
+            padding: 3px;
+            border-radius: 7px;
+            cursor: pointer;
+
+            img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .infoRoute {
+            position: absolute;
+            bottom: 7%;
+            right: 2%;
+            background-color: #fff;
+            padding: 3px;
+            border-radius: 7px;
+        }
     }
 
 }

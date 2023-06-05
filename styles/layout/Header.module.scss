@@ -102,31 +102,31 @@
                     font-weight: 500;
 
                     .btn {
-                        display: flex;
-                        justify-content: space-between;
-                        padding: 6px 16px;
+                        a {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 6px 16px;
 
-                        span {
-                            padding: 0 1px;
-                            vertical-align: middle;
+                            span {
+                                padding: 0 1px;
+                                vertical-align: middle;
+
+                                &:last-child {
+                                    padding-bottom: 3px;
+                                }
+                            }
 
                             &:last-child {
-                                padding-bottom: 3px;
+                                border-top: 1px solid #f9db77;
+                            }
+
+                            &:hover {
+                                background-color: #f9db77;
+                                color: #4C3D3D;
+                                cursor: pointer;
                             }
                         }
-
-                        &:last-child {
-                            border-top: 1px solid #f9db77;
-                        }
-
-                        &:hover {
-                            background-color: #f9db77;
-                            color: #4C3D3D;
-                            cursor: pointer;
-                        }
                     }
-
-
                 }
             }
         }
@@ -215,31 +215,32 @@
                     font-weight: 500;
 
                     .btn {
-                        display: flex;
-                        justify-content: space-between;
-                        padding: 6px 16px;
+                        a {
+                            color: #f9db77;
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 6px 16px;
 
-                        span {
-                            padding: 0 1px;
-                            vertical-align: middle;
+                            span {
+                                padding: 0 1px;
+                                vertical-align: middle;
+
+                                &:last-child {
+                                    padding-bottom: 3px;
+                                }
+                            }
 
                             &:last-child {
-                                padding-bottom: 3px;
+                                border-top: 1px solid #f9db77;
+                            }
+
+                            &:hover {
+                                background-color: #f9db77;
+                                color: #4C3D3D;
+                                cursor: pointer;
                             }
                         }
-
-                        &:last-child {
-                            border-top: 1px solid #f9db77;
-                        }
-
-                        &:hover {
-                            background-color: #f9db77;
-                            color: #4C3D3D;
-                            cursor: pointer;
-                        }
                     }
-
-
                 }
             }
         }

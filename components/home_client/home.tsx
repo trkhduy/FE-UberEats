@@ -4,7 +4,6 @@ import { Button, Col, Empty, Input, Row, Tooltip, message } from 'antd'
 import { ClockCircleFilled, SearchOutlined, ShoppingCartOutlined, StarFilled } from '@ant-design/icons'
 import Link from 'next/link'
 import ClientService from '@/service/clientService'
-import CartSrtvice from '@/service/cartService'
 import CartService from '@/service/cartService'
 import { useDispatch } from 'react-redux'
 import { fetchCartCount } from '@/redux/reducer/cartReducer'
@@ -163,12 +162,12 @@ function HomeClient(): any {
                                         <Col key={i} xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                             <div className={style.card_item}>
                                                 <div className={style.img_item}>
-                                                    <Link href={'/food/' + e.id}>
+                                                    <Link href={`/food/${e.id}`}>
                                                         <img src={e.images} alt="" />
                                                     </Link>
                                                 </div>
                                                 <div className={style.content_item}>
-                                                    <Link href={'/food/' + e.id}>
+                                                    <Link href={`/food/${e.id}`}>
                                                         <h3>{e.name}</h3>
                                                     </Link>
                                                     <div className={style.price_item}>
@@ -184,11 +183,10 @@ function HomeClient(): any {
                                                                 <span className={style.sale_price}>${e.price}</span>
                                                             </div>
                                                         }
-
                                                         <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
-                                                            {/* <Link href={''} style={{ color: '#4D3C3C' }}> */}
-                                                            <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                            {/* </Link> */}
+                                                            <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
+                                                                <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className={style.res_info}>
@@ -243,7 +241,7 @@ function HomeClient(): any {
                                     < Col key={i} xl={6} md={width >= 992 ? 8 : 12} sm={12} xs={24} style={{ padding: "0 20px", marginBottom: "35px" }}>
                                         <div className={style.card_item}>
                                             <div className={style.img_item}>
-                                                <Link href={''}>
+                                                <Link href={`/food/${e.id}`}>
                                                     <img src={e.images} alt="" />
                                                 </Link>
                                                 <div className={style.stars}>
@@ -255,7 +253,7 @@ function HomeClient(): any {
                                                 </div>
                                             </div>
                                             <div className={style.content_item}>
-                                                <Link href={''}>
+                                                <Link href={`/food/${e.id}`}>
                                                     <h3>{e.name}</h3>
                                                 </Link>
                                                 <div className={style.price_item}>
@@ -271,10 +269,10 @@ function HomeClient(): any {
                                                             <span className={style.sale_price}>${e.price}</span>
                                                         </div>
                                                     }
-                                                    <div className={style.cart_plus}>
-                                                        <Link href={''} style={{ color: '#4D3C3C' }}>
+                                                    <div className={style.cart_plus} onClick={() => handleAddCart(e.id, e.name)}>
+                                                        <span style={{ color: '#4D3C3C', cursor: 'pointer' }}>
                                                             <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                                                        </Link>
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div className={style.res_info}>

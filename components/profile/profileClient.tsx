@@ -1,5 +1,5 @@
-import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined, EnvironmentOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Avatar, Button, Checkbox, Col, Form, Input, Row, Segmented, Select, Upload, message } from 'antd';
+import { UserOutlined, LockOutlined, GoogleOutlined, FacebookFilled, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { Avatar, Button, Checkbox, Col, Form, Input, Popconfirm, Row, Segmented, Select, Space, Table, Upload, message } from 'antd';
 import style from '@/pages/user/style/login.module.scss'
 import { FC, useEffect, useState } from 'react';
 import clsx from 'clsx';
@@ -7,12 +7,16 @@ import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/uplo
 import { useRouter } from 'next/router';
 import { useForm } from 'antd/es/form/Form';
 import RestaurentService from '@/service/restaurantService';
-import ClientService from '@/service/clientService';
+import UserService from '@/service/userService';
+import Column from 'antd/es/table/Column';
+import CategoryModal from '../restaurant_owner/modelCategory';
+import UserAddressModal from '../home_client/modalUserAddress';
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
     console.log(reader.readAsDataURL(img));
+
 };
 
 const beforeUpload = (file: RcFile) => {
@@ -28,29 +32,26 @@ const beforeUpload = (file: RcFile) => {
     }
     return false;
 };
-const Profile: FC<any> = ({ title = 'Your profile', data }) => {
+const ClientProfile: FC<any> = ({ title = 'Your profile', data }) => {
 
     const router = useRouter();
-
     const [form] = Form.useForm();
     const [disabled, setDisabled] = useState(true);
-    const resService = new RestaurentService;
+    const [dataProfile, setDataProfile]: any = useState([])
 
+    const userService = new UserService
+    const getProfile = async () => {
+        let [data, err] = await userService.getInfo()
+        console.log(data);
+        if (!err) {
+            setDataProfile(data)
+            setImageUrl(data.avatar)
+            form.setFieldsValue(data)
+        }
+    }
 
     useEffect(() => {
-
-        if (data) {
-            // sconsole.log(data.avatar);
-
-            // data.avatar = process.env.SERVER_HOST + '/' + data.avatar;
-            setImageUrl(data.avatar)
-        }
-        // console.log(data.role);
-        // let role: number = data.role
-        // data.role = { value: '1' }
-        // form.setFieldsValue(data);
-        // form.setFieldsValue({ role: { value: 4 } });
-
+        getProfile()
     }, [])
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -67,15 +68,15 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
         });
     };
     const onFinish = async (values: any) => {
-        
         if (typeof values.avatar === 'string') {
             delete values.avatar;
         } else {
             values.avatar = values.avatar.file;
         }
-        const [respone, err]: any = await resService.updateProfile(values)
+        const [respone, err]: any = await userService.updateProfile(values)
         if (respone) {
-            router.push('/restaurantowner');
+            getProfile()
+            router.push('/driver')
             // setDisabled(true);
             success()
         } else {
@@ -113,6 +114,43 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
         </div>
     );
 
+    const { Column, ColumnGroup } = Table;
+    const [modalVisible, setModalVisible] = useState(false);
+    const [categoryToEdit, setCategoryToEdit]: any = useState(null);
+    const handleCreate = async (values: any, onSuccess: any) => {
+        // Gửi request tạo sản phẩm đến API
+        console.log("Form values", values);
+        let [data, err] = values.id ? await userService.updateUserAdress(values, values.id) : await userService.createUserAdress(values)
+        if (err) {
+            message.error('Error! An error occurred. Please try again later')
+            onSuccess();
+            setModalVisible(false);
+        } else {
+            message.success(values.id ? 'Update successfuly' : 'Create successfuly')
+            await getProfile()
+            onSuccess();
+            setModalVisible(false);
+        }
+
+    };
+    const handleCancel = () => {
+        setModalVisible(false);
+    };
+    const confirm = async (id: number) => {
+        let [data, err] = await userService.deleteUserAddress(id)
+        if (err) {
+            message.error('error! Please try again');
+        } else {
+            getProfile()
+            message.success('Xóa thành công');
+        }
+
+    };
+    const cancel = (e: any) => {
+        // console.log(e);
+        // message.error('Click on No');
+    }
+
     return (
         <>
             {contextHolder}
@@ -134,7 +172,7 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                         disabled={disabled}
                         name="normal_login"
                         className="login-form"
-                        initialValues={data}
+                        initialValues={dataProfile}
                         onFinish={onFinish}
                     >
                         <Form.Item
@@ -195,79 +233,78 @@ const Profile: FC<any> = ({ title = 'Your profile', data }) => {
                         >
                             <Input className={style.input_login} prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
-                        <Form.Item
-                            name={['restaurant', 'address']}
-
-                            rules={[{ required: true, message: 'Please input your address!' }]}
-                        >
-                            <Input className={style.input_login} prefix={<EnvironmentOutlined className="site-form-item-icon" />} placeholder="Address" />
-                        </Form.Item>
-                        <Form.Item
-                            name={['restaurant', 'opentime']}
-
-                            rules={[{ required: true, message: 'Please input your opentime!' }]}
-                        >
-                            <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="Open time" />
-                        </Form.Item>
-                        <Form.Item
-                            name={['restaurant', 'endtime']}
-
-                            rules={[{ required: true, message: 'Please input your endtime!' }]}
-                        >
-                            <Input className={style.input_login} prefix={<ClockCircleOutlined className="site-form-item-icon" />} placeholder="End time" />
-                        </Form.Item>
-                        {/* <Form.Item
-                            name="password"
-                            rules={[{ message: 'Please input your Password!' }]}
-                        >
-                            <Input.Password className={style.input_login}
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="Password"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="new_password"
-                            rules={[{ message: 'Please input your Password!' }]}
-                        >
-                            <Input.Password className={style.input_login}
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="New Password"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name=""
-
-                            rules={[
-                                {
-                                    message: 'Please confirm your password!',
-                                },
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value || getFieldValue('password') === value) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
-                                    },
-                                }),]}
-                        >
-                            <Input.Password className={style.input_login}
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="Confirm Password"
-                            />
-                        </Form.Item> */}
-
-
                         <Form.Item>
                             <button type='submit' disabled={disabled} className={clsx(style.btn_login, disabled && style.disabled)}>Update</button>
                         </Form.Item>
                     </Form>
+
+                    <div style={{ marginTop: '20px' }}>
+                        <Row justify={'space-between'} align={"middle"}>
+                            <Col><h2>Address</h2></Col>
+                            <Col>
+                                <Button type="primary" style={{ backgroundColor: "#FFD95A", color: "#4C3D3D" }} onClick={() => {
+                                    setCategoryToEdit(null)
+                                    setModalVisible(true)
+                                }}>
+                                    Add new address
+                                </Button>
+                            </Col>
+                        </Row>
+
+                        <div >
+                            <span style={{ display: "inline-block", width: "40px", height: "2px", backgroundColor: "#FFD95A" }} ></span>
+                            <span style={{ display: "inline-block", width: "2px", height: "2px", backgroundColor: "#FFD95A", marginLeft: '3px' }} ></span>
+                            <span style={{ display: "inline-block", width: "2px", height: "2px", backgroundColor: "#FFD95A", marginLeft: '3px' }} ></span>
+                            <span style={{ display: "inline-block", width: "2px", height: "2px", backgroundColor: "#FFD95A", marginLeft: '3px' }} ></span>
+                        </div>
+                        <Table dataSource={dataProfile.addresses}>
+
+                            <Column title="Id" dataIndex="id" key="id" />
+                            <Column title="Name" dataIndex="name" key="name" />
+                            <Column title="Address" dataIndex="name_address" key="name_address" />
+                            <Column title="Phone" dataIndex="phone" key="phone" />
+                            <Column
+                                title="Action"
+                                key="action"
+                                render={(_, record: any) => (<>
+                                    <Space size="middle" >
+                                        <div style={{ cursor: "pointer" }}>
+                                            <Button type="primary" onClick={() => {
+                                                setModalVisible(true)
+                                                setCategoryToEdit(record)
+                                            }}>
+                                                Edit
+                                            </Button>
+                                        </div>
+                                        <div style={{ cursor: "pointer" }}>
+                                            <Popconfirm
+                                                title="Are you sure ?"
+                                                description="Are you sure to delete this task?"
+                                                onConfirm={() => confirm(record.id)}
+                                                onCancel={cancel}
+                                                okText="Yes"
+                                                cancelText="No"
+                                            >
+                                                <Button type="primary" danger>Delete</Button>
+                                            </Popconfirm>
+                                        </div>
+                                    </Space>
+                                </>
+
+                                )}
+                            />
+                        </Table>
+                        <UserAddressModal
+                            visible={modalVisible}
+                            onCreate={handleCreate}
+                            onCancel={handleCancel}
+                            category={categoryToEdit}
+                        />
+                    </div>
                 </div>
             </div>
         </>
     );
 }
 
-export default Profile;
+export default ClientProfile;

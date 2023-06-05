@@ -1,19 +1,74 @@
 import React, { useEffect, useState } from 'react'
 import style from './style/voucher.module.scss'
-import { Col, Input, Row, Select } from 'antd'
+import { Col, Empty, Input, Row, Select } from 'antd'
 import Search from 'antd/es/transfer/search'
 import { HomeOutlined } from '@ant-design/icons'
 import BtnCopy from '@/components/btncopy'
+import ClientService from '@/service/clientService'
+import { useRouter } from 'next/router';
 const Voucher = () => {
+    const router = useRouter()
+    const clientService = new ClientService;
     const { Search } = Input;
-    const onSearch = (value: string) => console.log(value);
-    const handleChange = (value: string) => {
-        console.log(`selected ${value}`);
-    };
-    const handleChange1 = (value: string) => {
-        console.log(`selected ${value}`);
+    const [keyword, setKeyWord]: any = useState({});
+    const [res, setRes] = useState([]);
+    const onSearch = (value: string) => {
+        setKeyWord((data: any) => {
+            return {
+                ...data,
+                name: value
+            }
+        })
     };
 
+    const getRestaurant = async () => {
+        let [res, err] = await clientService.getRestaurant();
+        if (res) {
+            setRes(res);
+        }
+        if (err) {
+            console.log(err);
+        }
+    }
+
+    const queryString = (data: any) => {
+        return Object.entries(data)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+    }
+    const handleChange = (value: string) => {
+        setKeyWord((data: any) => {
+            return {
+                ...data,
+                userid: value
+            }
+        })
+    };
+    const handleChange1 = (value: string) => {
+        setKeyWord((data: any) => {
+            return {
+                ...data,
+                sortBy: value
+            }
+        })
+    };
+    const [voucher, setVoucher] = useState([]);
+    const getAllVoucher = async () => {
+        const data = queryString(keyword)
+        let [voucher, err] = await clientService.getAllVocher(data);
+        if (voucher) {
+            setVoucher(voucher)
+        }
+        if (err) {
+            console.log(err);
+        }
+    }
+    useEffect(() => {
+        router.replace({
+            query: keyword,
+        });
+        getAllVoucher()
+    }, [keyword]);
     // useWindow
     const [width, setWidth] = useState(0)
 
@@ -22,6 +77,8 @@ const Voucher = () => {
     }
 
     useEffect(() => {
+        getAllVoucher();
+        getRestaurant();
         // component is mounted and window is available
         handleWindowResize();
         window.addEventListener('resize', handleWindowResize);
@@ -48,14 +105,13 @@ const Voucher = () => {
                                         <Col xl={12} md={8} sm={12} xs={24}>
                                             <Select
                                                 className={style.filterBy}
-                                                defaultValue="Restaurant"
+                                                defaultValue=""
                                                 onChange={handleChange}
                                                 options={[
-                                                    { value: 'jack', label: 'Jack' },
                                                     { value: '', label: 'Restaurant' },
-                                                    { value: 'lucy', label: 'Lucy' },
-                                                    { value: 'Yiminghe', label: 'yiminghe' },
-                                                    { value: 'disabled', label: 'Disabled' },
+                                                    ...res.map((item: any, i) => {
+                                                        return { value: item.id, label: item.name }
+                                                    })
                                                 ]}
                                             />
                                         </Col>
@@ -68,10 +124,8 @@ const Voucher = () => {
                                         onChange={handleChange1}
                                         options={[
                                             { value: '', label: 'SortBy' },
-                                            { value: 'jack', label: 'Jack' },
-                                            { value: 'lucy', label: 'Lucy' },
-                                            { value: 'Yiminghe', label: 'yiminghe' },
-                                            { value: 'disabled', label: 'Disabled' },
+                                            { value: 'DESC', label: 'Decreasing' },
+                                            { value: 'ASC', label: 'Ascending' },
                                         ]}
                                     />
                                 </Col>
@@ -82,24 +136,35 @@ const Voucher = () => {
                         <div className={style.voucher_item}>
                             <h3>Quantity(3)</h3>
                             <Row >
-                                <Col xl={4} md={6} sm={12} xs={width <= 425 ? 24 : 12} style={{ padding: '15px' }}>
-                                    <div className={style.card_item}>
-                                        <div className={style.img_item}>
-                                            <img src="https://down-vn.img.susercontent.com/file/vn-11134201-23030-nkah04hyymovaf_tn" alt="" />
-                                        </div>
-                                        <div className={style.content_item}>
-                                            <p style={{ fontSize: '16px', margin: '15px 0 7px 0', fontWeight: '600' }}>Gói voucher Extra</p>
-                                            <span >Availabe: </span><span style={{ color: 'gray', fontWeight: '600' }}>1000</span>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '7px' }}>
-                                                <HomeOutlined style={{ fontSize: '16px', marginRight: '10px' }} />
-                                                <span style={{ fontWeight: '600', fontSize: "16px" }}>restaurant's name</span>
+                                {voucher && voucher.length > 0 ? voucher.map((item: any, i) => {
+                                    return (
+                                        <Col key={i} xl={4} md={6} sm={12} xs={width <= 425 ? 24 : 12} style={{ padding: '15px' }}>
+                                            <div className={style.card_item}>
+                                                <div className={style.img_item}>
+                                                    <img src={item.images} alt="" />
+                                                </div>
+                                                <div className={style.content_item}>
+                                                    <p style={{ fontSize: '16px', margin: '15px 0 7px 0', fontWeight: '600' }}>{item.name}</p>
+                                                    <div>
+                                                        <span>Discount: </span><span style={{ color: 'gray', fontWeight: '600' }}>{item.discount}%</span>
+                                                    </div>
+                                                    <span >Availabe: </span><span style={{ color: 'gray', fontWeight: '600' }}>{item.quantity}</span>
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '7px' }}>
+                                                        <HomeOutlined style={{ fontSize: '16px', marginRight: '10px' }} />
+                                                        <span style={{ fontWeight: '600', fontSize: "16px" }}>{item.user.name}</span>
+                                                    </div>
+                                                    <div style={{ padding: "10px 10px" }}>
+                                                        <BtnCopy value={item.code} />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div style={{ padding: "10px 10px" }}>
-                                                <BtnCopy value={'123'} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Col>
+                                        </Col>
+                                    )
+                                })
+
+                                    : <Empty style={{ margin: '0 auto' }} />
+                                }
+
                             </Row>
                         </div>
                     </div>
