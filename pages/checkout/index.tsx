@@ -11,9 +11,6 @@ import UserService from '@/service/userService'
 import CartService from '@/service/cartService'
 import ProductService from '@/service/productService'
 
-// sessionStorage.getItem('cart')
-// sessionStorage.getItem('coupon');
-// sessionStorage.getItem('totalCart');
 const Checkout = () => {
     const clientService = new ClientService;
     const userService = new UserService;
@@ -41,17 +38,22 @@ const Checkout = () => {
         setValue(e.target.value);
     };
     const handleChange = (value: string) => {
-        let data = dataProfile.find((item: any) => item.id === value)
-        form.setFieldsValue(data)
-        setIdAdd(data.id)
+        if (value == '') {
+            let data = dataProfile.find((item: any) => item.id === value)
+            form.setFieldsValue(data)
+            setIdAdd(0)
+        } else {
+            let data = dataProfile.find((item: any) => item.id === value)
+            form.setFieldsValue(data)
+            setIdAdd(data.id)
+        }
         // console.log(`selected ${value}`);
     };
     const getProfile = async () => {
         let [data, err] = await clientService.getInfo()
-        console.log(data.addresses[0]);
         if (!err) {
             setDataProfile(data.addresses)
-            form.setFieldsValue(data.addresses[0])
+            // form.setFieldsValue(data.addresses[0])
         }
     }
     const onFinish = async (values: any) => {
@@ -67,6 +69,8 @@ const Checkout = () => {
         setSessionCart(JSON.parse(sessionStorage.getItem('cart') as string));
         setCoupon(sessionStorage.getItem('coupon'));
         setTotalCart(sessionStorage.getItem('totalCart'));
+        console.log(totalCart);
+
         const [data, err] = await cartService.getAllCart();
         if (data) {
             let curCart = data.filter((item: any) => JSON.parse(sessionStorage.getItem('cart') as string)?.includes(item.id));
@@ -86,6 +90,9 @@ const Checkout = () => {
         console.log(cart);
         console.log(idAdd);
         console.log(cart[0].product.restaurant.id);
+        if (!idAdd) {
+            return message.error('please choose your address')
+        }
         let dataOrder = {
             restaurantid: cart[0].product.restaurant.id,
             statusid: 1,
@@ -102,7 +109,7 @@ const Checkout = () => {
                     quantity: item.quantity
                 }
                 let [dataOD, err] = await productService.createOrderDetail(dataOrderDetail)
-                if (!err) {
+                if (err) {
                     console.log(err);
                 }
             });
@@ -124,14 +131,17 @@ const Checkout = () => {
                                 <Switch checkedChildren="Edit" unCheckedChildren="Default" style={{ display: 'block' }} onChange={(v) => setDisabled(v)
                                 } />
                                 <Select
-                                    defaultValue={'default'}
+                                    defaultValue={''}
                                     className={style.select}
                                     onChange={handleChange}
 
                                     options={
-                                        dataProfile.map((item: any) => {
-                                            return { value: item.id, label: item.name_address }
-                                        })
+                                        [
+                                            { value: '', label: 'Choose Address' },
+                                            ...dataProfile.map((item: any) => {
+                                                return { value: item.id, label: item.name_address }
+                                            })
+                                        ]
                                     }
                                 />
                             </div>
@@ -233,7 +243,7 @@ const Checkout = () => {
                                 <div className={style.total_price}>
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                                         <span style={{ fontSize: '17px', fontWeight: '400' }}>Subtotal:</span>
-                                        <span style={{ fontSize: '16px' }}>{totalCart - 10} $</span>
+                                        <span style={{ fontSize: '16px' }}>{totalCart} $</span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '17px', fontWeight: '400' }}>Shipping Fee:</span>
@@ -241,7 +251,7 @@ const Checkout = () => {
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '20px', fontWeight: '500' }}>Total:</span>
-                                        <span style={{ fontSize: '18px', fontWeight: '500', color: '#fcaf17' }}>{totalCart} $</span>
+                                        <span style={{ fontSize: '18px', fontWeight: '500', color: '#fcaf17' }}>{Number(totalCart) + 10} $</span>
                                     </div>
                                     <div style={{ display: 'flex', marginBottom: '10px', marginTop: '25px', justifyContent: 'space-between' }}>
                                         <Link href={'/cart'}>

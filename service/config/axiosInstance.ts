@@ -54,9 +54,9 @@ axiosClient.interceptors.request.use(async (config) => {
 //response
 axiosClient.interceptors.response.use((response: any) => {
     console.log('res', response);
-    setTimeout(() => {
-        localStorage.setItem('loading', 'false');
-    }, 3000);
+    // setTimeout(() => {
+    //     localStorage.setItem('loading', 'false');
+    // }, 3000);
 
     return response
 }, (err) => {
