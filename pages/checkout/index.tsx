@@ -9,6 +9,7 @@ import { LeftOutlined } from '@ant-design/icons'
 import ClientService from '@/service/clientService'
 import UserService from '@/service/userService'
 import CartService from '@/service/cartService'
+import ProductService from '@/service/productService'
 
 const Checkout = () => {
     const clientService = new ClientService;
@@ -16,17 +17,15 @@ const Checkout = () => {
     const cartService = new CartService;
     const [sessionCart, setSessionCart]: any = useState();
     const [coupon, setCoupon]: any = useState();
-    const [cart, setCart] = useState([]);
+    const [cart, setCart]: any = useState([]);
     const { TextArea } = Input;
     const [form] = Form.useForm();
     const [componentSize, setComponentSize] = useState<SizeType | 'default'>('default');
     const [disabled, setDisabled] = useState(false)
     const [dataProfile, setDataProfile]: any = useState([])
     const [totalCart, setTotalCart]: any = useState();
+    const [idAdd, setIdAdd] = useState(0)
     useEffect(() => {
-        setSessionCart(sessionStorage.getItem('cart'));
-        setCoupon(sessionStorage.getItem('coupon'));
-        setTotalCart(sessionStorage.getItem('totalCart'));
         getCart()
     }, [])
     const onFormLayoutChange = ({ size }: { size: SizeType }) => {
@@ -39,17 +38,22 @@ const Checkout = () => {
         setValue(e.target.value);
     };
     const handleChange = (value: string) => {
-        form.setFieldsValue(dataProfile.find((item: any) => item.id === value))
-
-        console.log(dataProfile[0]?.id);
+        if (value == '') {
+            let data = dataProfile.find((item: any) => item.id === value)
+            form.setFieldsValue(data)
+            setIdAdd(0)
+        } else {
+            let data = dataProfile.find((item: any) => item.id === value)
+            form.setFieldsValue(data)
+            setIdAdd(data.id)
+        }
         // console.log(`selected ${value}`);
     };
     const getProfile = async () => {
         let [data, err] = await clientService.getInfo()
-        console.log(data.addresses[0]);
         if (!err) {
             setDataProfile(data.addresses)
-            form.setFieldsValue(data.addresses[0])
+            // form.setFieldsValue(data.addresses[0])
         }
     }
     const onFinish = async (values: any) => {
@@ -62,9 +66,14 @@ const Checkout = () => {
         }
     }
     const getCart = async () => {
+        setSessionCart(JSON.parse(sessionStorage.getItem('cart') as string));
+        setCoupon(sessionStorage.getItem('coupon'));
+        setTotalCart(sessionStorage.getItem('totalCart'));
+        console.log(totalCart);
+
         const [data, err] = await cartService.getAllCart();
         if (data) {
-            let curCart = data.filter((item: any) => sessionCart?.includes(item.id));
+            let curCart = data.filter((item: any) => JSON.parse(sessionStorage.getItem('cart') as string)?.includes(item.id));
             setCart(curCart)
         }
         if (err) {
@@ -76,7 +85,37 @@ const Checkout = () => {
         getProfile()
         getCart()
     }, [])
+    const productService = new ProductService
+    const handleSubmit = async () => {
+        console.log(cart);
+        console.log(idAdd);
+        console.log(cart[0].product.restaurant.id);
+        if (!idAdd) {
+            return message.error('please choose your address')
+        }
+        let dataOrder = {
+            restaurantid: cart[0].product.restaurant.id,
+            statusid: 1,
+            userAddressid: idAdd
+        }
+        let [data, err] = await productService.createOrder(dataOrder)
+        if (!err) {
+            console.log(data);
 
+            cart.forEach(async (item: any) => {
+                let dataOrderDetail = {
+                    orderid: data.result.id,
+                    productid: item.product.id,
+                    quantity: item.quantity
+                }
+                let [dataOD, err] = await productService.createOrderDetail(dataOrderDetail)
+                if (err) {
+                    console.log(err);
+                }
+            });
+            message.success('Successfuly!')
+        }
+    }
     return (
         <>
             <div className={style.cart_page}>
@@ -92,14 +131,17 @@ const Checkout = () => {
                                 <Switch checkedChildren="Edit" unCheckedChildren="Default" style={{ display: 'block' }} onChange={(v) => setDisabled(v)
                                 } />
                                 <Select
-                                    defaultValue={'default'}
+                                    defaultValue={''}
                                     className={style.select}
                                     onChange={handleChange}
 
                                     options={
-                                        dataProfile.map((item: any) => {
-                                            return { value: item.id, label: item.name_address }
-                                        })
+                                        [
+                                            { value: '', label: 'Choose Address' },
+                                            ...dataProfile.map((item: any) => {
+                                                return { value: item.id, label: item.name_address }
+                                            })
+                                        ]
                                     }
                                 />
                             </div>
@@ -153,7 +195,7 @@ const Checkout = () => {
                         <Col xl={8} md={18} sm={24} xs={24}>
                             <div className={style.order_item}>
                                 <h5 style={{ color: '#333', marginBottom: '20px' }}>Your Order</h5>
-                                {cart && cart.length > 0 ? cart.map((item: any, i) => {
+                                {cart && cart.length > 0 ? cart.map((item: any) => {
                                     return (
                                         <div className={style.items}>
                                             <Row align={'middle'}>
@@ -201,7 +243,7 @@ const Checkout = () => {
                                 <div className={style.total_price}>
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                                         <span style={{ fontSize: '17px', fontWeight: '400' }}>Subtotal:</span>
-                                        <span style={{ fontSize: '16px' }}>{totalCart - 10} $</span>
+                                        <span style={{ fontSize: '16px' }}>{totalCart} $</span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '17px', fontWeight: '400' }}>Shipping Fee:</span>
@@ -209,7 +251,7 @@ const Checkout = () => {
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '20px', fontWeight: '500' }}>Total:</span>
-                                        <span style={{ fontSize: '18px', fontWeight: '500', color: '#fcaf17' }}>{totalCart} $</span>
+                                        <span style={{ fontSize: '18px', fontWeight: '500', color: '#fcaf17' }}>{Number(totalCart) + 10} $</span>
                                     </div>
                                     <div style={{ display: 'flex', marginBottom: '10px', marginTop: '25px', justifyContent: 'space-between' }}>
                                         <Link href={'/cart'}>
@@ -218,7 +260,7 @@ const Checkout = () => {
                                             </div>
                                         </Link>
                                         <Form.Item>
-                                            <Button style={{ borderRadius: '0 !important' }}>Submit</Button>
+                                            <Button style={{ borderRadius: '0 !important' }} onClick={handleSubmit}>Submit</Button>
                                         </Form.Item>
                                     </div>
                                 </div>

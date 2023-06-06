@@ -39,8 +39,15 @@ export default class ProductService {
             })
             .catch((err) => [null, err])
     }
-    async createOrder(data: AnyObject) {
-        return await axiosClient.post('/order/', data)
+    async createOrder(data: any) {
+        return await axiosClient.post('/order', data)
+            .then((data: any) => {
+                return [data.data, null]
+            })
+            .catch((err) => [null, err])
+    }
+    async createOrderDetail(data: any) {
+        return await axiosClient.post('/orderdetail', data)
             .then((data: any) => {
                 return [data.data, null]
             })

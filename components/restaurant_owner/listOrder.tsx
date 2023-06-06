@@ -75,6 +75,7 @@ const Order: FC<any> = ({ title, data }: { title: string, data: [] }) => {
             message.success("Accept Done~!")
         }
     }
+
     return (
         <>
             <div className={style.menu}>
@@ -95,7 +96,6 @@ const Order: FC<any> = ({ title, data }: { title: string, data: [] }) => {
                                     {item.order_detail.map((listProduct: any) => (
                                         <div className={style.item}>
                                             <Divider />
-
                                             <Row>
                                                 <Col flex={'auto'}>
                                                     <div style={{ display: 'flex' }}>
@@ -112,9 +112,9 @@ const Order: FC<any> = ({ title, data }: { title: string, data: [] }) => {
                                                             ) : (
                                                                 <div className={style.price} style={{ color: "yellowgreen" }}>
                                                                     ${listProduct.product.price}
-
                                                                 </div>
                                                             )}
+                                                            <div>x{listProduct.quantity}</div>
                                                         </div>
 
                                                     </div>

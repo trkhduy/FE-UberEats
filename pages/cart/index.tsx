@@ -120,6 +120,8 @@ function Cart() {
         sessionStorage.setItem('totalCart', JSON.stringify(total));
         if (voucher) {
             sessionStorage.setItem('coupon', JSON.stringify(voucher.code));
+        } else {
+            sessionStorage.removeItem('coupon')
         }
         router.push('/checkout')
     }
