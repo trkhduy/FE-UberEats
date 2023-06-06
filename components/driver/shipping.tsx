@@ -3,8 +3,8 @@ import Head from 'next/head';
 import style from './style/home.module.scss';
 import Map, { GeolocateControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-
-import { useContext, useEffect, useRef, useState } from 'react';
+import Geocode from 'react-geocode';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Button, Col, Collapse, Divider, Popconfirm, Result, Row, Space, message } from 'antd';
 import { EnvironmentOutlined, SmileOutlined } from '@ant-design/icons';
 import RestaurentService from '@/service/restaurantService';
@@ -12,16 +12,13 @@ import { WebsocketContext } from '@/context/WebsocketContext';
 import ProductService from '@/service/productService';
 import { updateOrder } from '../restaurant_owner/listOrder';
 import { useRouter } from 'next/router';
+import { DirectionsRenderer, GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
+import GetMarker from '../marker/marker';
 
 function DriverShippingPage() {
     const { Panel } = Collapse;
     const router = useRouter()
-    const mapContainer: any = useRef(null);
-    const map: any = useRef(null);
-    const [lng, setLng] = useState(-70.9);
-    const [lat, setLat] = useState(42.35);
     const [with2, setWith2] = useState(0);
-    const [zoom, setZoom] = useState(9);
     const [acpOrder, setAcpOrder]: any = useState(true);
     const socket = useContext(WebsocketContext)
     const productService = new ProductService
@@ -105,10 +102,9 @@ function DriverShippingPage() {
         return (
             <>
                 <div className={style.info} style={{ backgroundColor: "#e9e9e9" }}>
-                    <h3><EnvironmentOutlined /> Main Boulevard, , Lahore, Punjab, Pakistan - 54000</h3>
-                    <p>Name: <span>Sơn</span></p>
-                    <p>Phone: <span>0987654321</span></p>
-                    <p>Note: <span>cô lô nhuê</span></p>
+                    <h3><EnvironmentOutlined /> {data.address}</h3>
+                    <p>Name: <span>{data.name}</span></p>
+                    <p>Phone: <span>{data.phone}</span></p>
                 </div>
             </>
         )
@@ -139,6 +135,85 @@ function DriverShippingPage() {
         }
         return subPrice.toFixed(2)
     }
+
+    //Google map
+    const [lat, setLat]: any = useState();
+    const [lng, setLng]: any = useState();
+    const center: any = { lat: lat, lng: lng };
+    Geocode.setApiKey(process.env.GOOGLE_MAPS_API_KEY || '')
+
+    useEffect(() => {
+        const getLocation = async () => {
+            try {
+                // Lấy vị trí hiện tại từ trình duyệt
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (position) => {
+                        const { latitude, longitude }: { latitude: any, longitude: any } = position.coords;
+
+                        // Gọi hàm reverse geocoding để lấy thông tin địa chỉ từ tọa độ
+                        const response = await Geocode.fromLatLng(latitude, longitude);
+                        const address = response.results[0].formatted_address;
+                        setLat(latitude);
+                        setLng(longitude);
+                        console.log('Current address:', address);
+                        console.log('Current latitude:', latitude);
+                        console.log('Current longitude:', longitude);
+                        // Thực hiện các xử lý khác với thông tin vị trí tại đây
+                    });
+                } else {
+                    console.error('Geolocation is not supported by this browser.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getLocation();
+
+        const calculateRoute = async () => {
+            if (listOrder.length == 0) {
+                return console.log('không có đơn hàng');
+            }
+            listOrder && listOrder.map((item: any, i) => {
+                setOrigin(item.restaurant.restaurant.address)
+                setDestination(item.user_address.name_address)
+
+            })
+            const directionService = new google.maps.DirectionsService();
+            const results: any = await directionService.route({
+                origin: origin,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING
+            })
+            setDirection(results);
+            setDistance(results.routes[0].legs[0].distance.text);
+            setDuration(results.routes[0].legs[0].duration.text)
+        };
+
+        calculateRoute();
+    }, []);
+
+    const [map, setMap]: any = useState(/** @type google.maps.Map */ null);
+    const [direction, setDirection] = useState(null);
+    const [distance, setDistance] = useState('');
+    const [duration, setDuration] = useState('');
+    const [origin, setOrigin] = useState('');
+    const [destination, setDestination] = useState('');
+
+    const libraries = useMemo(() => ['places'], []);
+
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY as string,
+        libraries: libraries as any,
+    });
+
+
+    if (!isLoaded) {
+        return <p>Loading...</p>;
+    }
+    console.log('origin', origin);
+    console.log('destin', destination);
+
     return (
         <>
             {result && <div style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, zIndex: 20, backgroundColor: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -163,21 +238,26 @@ function DriverShippingPage() {
 
                     <Col md={12} sm={24} span={24}>
                         <div className={style.map} style={{ width: "100%", maxWidth: "1440px", aspectRatio: acpOrder && (with2 <= 768) ? '9/16' : '16/9' }} >
-                            <Map
-                                style={{ width: '100%', height: '100%' }}
-                                mapboxAccessToken="pk.eyJ1IjoidHJpZGMiLCJhIjoiY2xobm4xdXh3MW16azNnbHJvcHRwYmRodiJ9.WK8ZUq8s5DqkBdqzj20a6Q"
-                                initialViewState={{
-                                    longitude: 107.4204107,
-                                    latitude: 19.8434013,
-                                    zoom: 4.84,
+                            <GoogleMap center={center} zoom={15} mapContainerStyle={{ width: '100%', height: '100%' }}
+                                options={{
+                                    zoomControl: false,
+                                    streetViewControl: false,
+                                    fullscreenControl: false
                                 }}
-                                mapStyle="mapbox://styles/tridc/clhnnergm01p401pr3eulbcaa"
+                                onLoad={(map: any) => setMap(map)}
                             >
-                                <GeolocateControl
-                                    // positionOptions={{ enableHighAccuracy: true }}
-                                    trackUserLocation={true}
-                                />
-                            </Map>
+                                <Marker position={{ lat: lat, lng: lng }} />
+                                {direction && <DirectionsRenderer directions={direction} />}
+                            </GoogleMap>
+                            <span onClick={() => map.panTo(center)} className={style.backTo}>
+                                <img src="https://cdn-icons-png.flaticon.com/512/1161/1161225.png" alt="" />
+                            </span>
+                            {direction &&
+                                <div className={style.infoRoute}>
+                                    <span style={{ marginRight: '10px' }}><b>Distance: </b>{distance}</span>
+                                    <span><b>Duration: </b>{duration}</span>
+                                </div>
+                            }
                         </div>
                         {acpOrder && < div >
                             <Button style={{ width: "100%", margin: "10px 0", backgroundColor: "greenyellow", color: "#000" }} type='primary' onClick={() => handleAccept(listOrder[0])} >Order Successfuly</Button>
@@ -195,7 +275,7 @@ function DriverShippingPage() {
                                                     <Divider orientation="left">Orderer</Divider>
                                                     {InforOrderer(item.user_address)}
                                                     <Divider style={{ marginTop: '40px' }} orientation="left">Restaurant</Divider>
-                                                    {InforRestaurant({ name: 'Thằng Sơn', address: "Hoài Đức", phone: "0987654321" })}
+                                                    {InforRestaurant({ name: item.restaurant.name, address: item.restaurant.restaurant.address, phone: item.restaurant.phone })}
 
                                                     {item.order_detail.map((listProduct: any) => (
                                                         <div className={style.item}>
@@ -217,15 +297,11 @@ function DriverShippingPage() {
                                                                             ) : (
                                                                                 <div className={style.price} style={{ color: "yellowgreen" }}>
                                                                                     ${listProduct.product.price}
-
                                                                                 </div>
                                                                             )}
                                                                         </div>
-
                                                                     </div>
-
                                                                 </Col>
-
                                                             </Row>
 
                                                         </div>

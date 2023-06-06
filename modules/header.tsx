@@ -141,16 +141,18 @@ const Header = () => {
                                                         <div className={style.btn}>
                                                             <Link href={'/user/profile'}>
                                                                 <span>Profile</span>
+                                                                <span className={style.logOut}>
+                                                                    <UserOutlined />
+                                                                </span>
                                                             </Link>
-                                                            <span className={style.logOut}>
-                                                                <UserOutlined />
-                                                            </span>
                                                         </div>
                                                         <div className={style.btn} onClick={logOut}>
-                                                            <span>Logout</span>
-                                                            <span className={style.logOut} >
-                                                                <LogoutOutlined />
-                                                            </span>
+                                                            <a>
+                                                                <span>Logout</span>
+                                                                <span className={style.logOut} >
+                                                                    <LogoutOutlined />
+                                                                </span>
+                                                            </a>
                                                         </div>
 
                                                     </div>

@@ -78,16 +78,19 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
 
-    <Provider store={store}>
-      <Layout>
-        {contextHolder}
-        <WebsocketProvider value={socket}>
-          <Component {...pageProps} />
-        </WebsocketProvider>
+    <>
+      <Provider store={store}>
+        <Layout>
+          {contextHolder}
+          <WebsocketProvider value={socket}>
+            <Component {...pageProps} />
+          </WebsocketProvider>
+          {router.route.includes('/driver') && <LayoutDriver />}
+        </Layout>
+        {loading && <div style={{ position: 'fixed', zIndex: "100000", backgroundColor: "#cccccc7a", top: "0", left: 0, width: "100%", height: '100vh', display: "flex", alignItems: "center", justifyContent: 'center' }}></div>}
+      </Provider>
+    </>
 
-        {router.route.includes('/driver') && <LayoutDriver />}
-      </Layout>
-    </Provider>
   )
 
 }
