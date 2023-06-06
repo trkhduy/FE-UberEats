@@ -6,9 +6,10 @@ import ProductService from '@/service/productService';
 import { updateOrder } from '../restaurant_owner/listOrder';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState, useMemo, useContext } from 'react';
-import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, message } from 'antd';
-import { EnvironmentOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, message, notification } from 'antd';
+import { EnvironmentOutlined, LoadingOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoadScript, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
+import { io } from 'socket.io-client';
 
 const center = { lat: 21.0348, lng: 105.9127 };
 function DriverPage() {
@@ -19,40 +20,53 @@ function DriverPage() {
     const productService = new ProductService
     const [listOrder, setListOrder] = useState([])
     const router = useRouter()
+    const [token, setToken]: any = useState(null)
+    const getCookie = (name: string) => {
+        const cookieValue = document.cookie?.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)') || null;
+        return cookieValue ? cookieValue.pop() : null;
+    }
     useEffect(() => {
-        getOrderDriver()
-        socket.on('connect', () => {
-            console.log('connection..');
-        })
-        socket.on('test', (data: any) => {
-            console.log('connection..', data);
-        })
-        socket.on('GetOrderDriver', (listOrder: any) => {
-            console.log('driver', listOrder);
-            listOrder && setListOrder(listOrder)
-        })
-        return () => {
-            console.log('Unregistering Events...');
-            socket.off('connect');
-            socket.off('GetOrderDriver');
-        };
+        setToken(getCookie('refresh_token') as string)
+        GetOrderByDriver()
     }, [])
     useEffect(() => {
+        if (token) {
+            const socket = io('http://localhost:3333', {
+                extraHeaders: {
+                    authorization: `Bearer ${(token)}`
+                }
+            })
+            console.log('socket', socket);
+            socket.on('connect', () => {
+                console.log('connection..');
+            })
+            socket.on('GetOrderByDriver', (listOrder: any) => {
+                console.log('order', listOrder);
+                GetOrderByDriver()
+            })
+            return () => {
+                console.log('Unregistering Events...');
+                socket.off('connect');
+                socket.off('GetOrderByDriver');
+            };
+        }
+    }, [token])
+    useEffect(() => {
         if (acpOrder) {
-            socket.off('GetOrderDriver');
+            socket.off('GetOrderByDriver');
             getDetail()
             // socket.on('getDetailOrderFindDriver', () => { })
         } else {
-            socket.on('GetOrderDriver', () => {
+            socket.on('GetOrderByDriver', () => {
 
             });
         }
         return () => {
             socket.off('connect');
-            socket.off('GetOrderDriver');
+            socket.off('GetOrderByDriver');
         }
     }, [acpOrder]);
-    const getOrderDriver = async () => {
+    const GetOrderByDriver = async () => {
         let [data, err] = await productService.getOrderDriver()
         if (!err) {
             console.log('dsadas', data);

@@ -13,11 +13,18 @@ import store from '@/redux/store'
 import { WebsocketProvider, socket } from '@/context/WebsocketContext'
 
 
+
 export default function App({ Component, pageProps }: AppProps) {
   // const { store } = wrapper.useWrappedStore(pageProps);
   const router = useRouter()
+  const [refreshToken, setRefreshToken] = useState('')
   const [loading, setLoading] = useState(false)
+  const getCookie = (name: string) => {
+    const cookieValue = document.cookie?.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)') || null;
+    return cookieValue ? cookieValue.pop() : null;
+  }
   useEffect(() => {
+    setRefreshToken(getCookie('refresh_token') as string)
     const handleStorageChange = (event: any) => {
       if (event.key === 'loading') {
         const localStorageLoading = localStorage.getItem('loading');
@@ -75,15 +82,16 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
   }, [router])
+  console.log('refreshToken', refreshToken);
 
   return (
 
     <Provider store={store}>
       <Layout>
         {contextHolder}
-        <WebsocketProvider value={socket}>
-          <Component {...pageProps} />
-        </WebsocketProvider>
+        {/* <WebsocketProvider value={socket(getCookie('refresh_token') as string)}> */}
+        <Component {...pageProps} />
+        {/* </WebsocketProvider> */}
 
         {router.route.includes('/driver') && <LayoutDriver />}
       </Layout>
