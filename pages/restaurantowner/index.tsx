@@ -1,5 +1,5 @@
 
-import { Col, Rate, Row, notification } from "antd";
+import { Col, Rate, Row, message, notification } from "antd";
 import style from "../../styles/restaurant/restaurant.module.scss";
 import Menu from "@/components/restaurant_owner/listMenu";
 import clsx from "clsx";
@@ -13,11 +13,13 @@ import RestaurentService from "@/service/restaurantService";
 import Category from "@/components/restaurant_owner/listCategory";
 import Voucher from "../voucher";
 import ListVoucher from "@/components/restaurant_owner/listVoucher";
-import { WebsocketContext } from "@/context/WebsocketContext";
+
 import axiosClient from "@/service/config/axiosInstance";
 import ProductService from "@/service/productService";
 import { resourceUsage } from "process";
 import { SmileOutlined } from "@ant-design/icons";
+import { WebsocketContext } from "@/context/WebsocketContext";
+import { io } from "socket.io-client";
 
 
 function RestaurentOwner() {
@@ -27,29 +29,42 @@ function RestaurentOwner() {
     const [dataInfo, setDataInfo] = useState({})
     const productService = new ProductService
     const restaurantService = new RestaurentService
-    const socket = useContext(WebsocketContext)
+    // const socket = useContext(WebsocketContext)
+    //Socket connect
+    const [token, setToken]: any = useState(null)
+    const getCookie = (name: string) => {
+        const cookieValue = document.cookie?.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)') || null;
+        return cookieValue ? cookieValue.pop() : null;
+    }
+
+    useEffect(() => {
+        setToken(getCookie('refresh_token') as string)
+    }, [])
+    useEffect(() => {
+        if (token) {
+            const socket = io('http://localhost:3333', {
+                extraHeaders: {
+                    authorization: `Bearer ${(token)}`
+                }
+            })
+            console.log('socket', socket);
+            socket.on('connect', () => {
+                console.log('connection..');
+            })
+            socket.on('GetOrder', (listOrder: any) => {
+                // console.log('order', listOrder);
+                getOrderRestaurant()
+            })
+            return () => {
+                console.log('Unregistering Events...');
+                socket.off('connect');
+                socket.off('GetOrder');
+            };
+        }
+    }, [token])
     useEffect(() => {
         getOrderRestaurant()
         info()
-        socket.on('connect', () => {
-            console.log('connection..');
-        })
-        socket.on('test', (data: any) => {
-            console.log('connection..', data);
-        })
-        socket.on('GetOrderRestaurant', (listOrder: any) => {
-            console.log('order', listOrder);
-            // listOrder && notification.open({
-            //     message: 'Have a new Order!',
-            //     icon: <SmileOutlined style={{ color: '#108ee9' }} />,
-            // })
-            listOrder && setListOrder(listOrder)
-        })
-        return () => {
-            console.log('Unregistering Events...');
-            socket.off('connect');
-            socket.off('getOrderRestaurant');
-        };
     }, [])
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
@@ -60,8 +75,7 @@ function RestaurentOwner() {
     const getOrderRestaurant = async () => {
         let [data, err] = await productService.getOrderRestaurant()
         if (!err) {
-            console.log('dsadas', data);
-
+            // console.log('dsadas', data);
             setListOrder(data)
         }
         return data

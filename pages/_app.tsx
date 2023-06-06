@@ -13,11 +13,18 @@ import store from '@/redux/store'
 import { WebsocketProvider, socket } from '@/context/WebsocketContext'
 
 
+
 export default function App({ Component, pageProps }: AppProps) {
   // const { store } = wrapper.useWrappedStore(pageProps);
   const router = useRouter()
+  const [refreshToken, setRefreshToken] = useState('')
   const [loading, setLoading] = useState(false)
+  const getCookie = (name: string) => {
+    const cookieValue = document.cookie?.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)') || null;
+    return cookieValue ? cookieValue.pop() : null;
+  }
   useEffect(() => {
+    setRefreshToken(getCookie('refresh_token') as string)
     const handleStorageChange = (event: any) => {
       if (event.key === 'loading') {
         const localStorageLoading = localStorage.getItem('loading');
@@ -75,22 +82,20 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
   }, [router])
+  console.log('refreshToken', refreshToken);
 
-  return (
+return (
 
-    <>
-      <Provider store={store}>
-        <Layout>
-          {contextHolder}
-          <WebsocketProvider value={socket}>
-            <Component {...pageProps} />
-          </WebsocketProvider>
-          {router.route.includes('/driver') && <LayoutDriver />}
-        </Layout>
-        {loading && <div style={{ position: 'fixed', zIndex: "100000", backgroundColor: "#cccccc7a", top: "0", left: 0, width: "100%", height: '100vh', display: "flex", alignItems: "center", justifyContent: 'center' }}></div>}
-      </Provider>
-    </>
+    <Provider store={store}>
+      <Layout>
+        {contextHolder}
+        {/* <WebsocketProvider value={socket(getCookie('refresh_token') as string)}> */}
+        <Component {...pageProps} />
+        {/* </WebsocketProvider> */}
 
+        {router.route.includes('/driver') && <LayoutDriver />}
+      </Layout>
+    </Provider>
   )
 
 }

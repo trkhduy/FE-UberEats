@@ -24,32 +24,15 @@ function DriverShippingPage() {
     const productService = new ProductService
     const [result, setResult] = useState(false)
     const [listOrder, setListOrder] = useState([])
-    // useEffect(() => {
-    //     getOrderDriver()
-    //     socket.on('connect', () => {
-    //         console.log('connection..');
-    //     })
-    //     socket.on('test', (data: any) => {
-    //         console.log('connection..', data);
-    //     })
-    //     socket.on('GetOrderDriver', (listOrder: any) => {
-    //         console.log('driver', listOrder);
-    //         listOrder && setListOrder(listOrder)
-    //     })
-    //     return () => {
-    //         console.log('Unregistering Events...');
-    //         socket.off('connect');
-    //         socket.off('GetOrderDriver');
-    //     };
-    // }, [])
-    // const getOrderDriver = async () => {
-    //     let [data, err] = await productService.getOrderDriver()
-    //     if (!err) {
-    //         console.log('dsadas', data);
-    //         setListOrder(data)
-    //     }
-    //     return data
-    // }
+   
+    const getOrderDriver = async () => {
+        let [data, err] = await productService.getOrderDriver()
+        if (!err) {
+            console.log('dsadas', data);
+            setListOrder(data)
+        }
+        return data
+    }
 
     const confirm = (e: any): void => {
         console.log(e);

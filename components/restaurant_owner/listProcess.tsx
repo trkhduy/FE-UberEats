@@ -39,6 +39,7 @@ const ProcessOrder: FC<any> = ({ title, data }) => {
             message.success("Accept Done~!")
         }
     }
+    console.log('role', role);
     const Header = (id: string, status: any, price: number, data: any) => (
         <Row align={"middle"} justify={"space-between"} style={{ width: "100%" }}>
             <Col><h3 style={{ margin: "0" }}>{id}</h3></Col>
