@@ -5,7 +5,7 @@ import Link from 'next/link'
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { AlertOutlined, BarsOutlined, EnvironmentOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useToken from '@/pages/hook/useToken';
 import UserService from '@/service/userService';
 import ClientService from '@/service/clientService';
@@ -146,6 +146,14 @@ const Header = () => {
                                                                 </span>
                                                             </Link>
                                                         </div>
+                                                        <div className={style.btn}>
+                                                            <Link href={'/listOrder'}>
+                                                                <span>List Order</span>
+                                                                <span className={style.logOut} >
+                                                                    <AlertOutlined />
+                                                                </span>
+                                                            </Link>
+                                                        </div>
                                                         <div className={style.btn} onClick={logOut}>
                                                             <a>
                                                                 <span>Logout</span>
@@ -154,6 +162,7 @@ const Header = () => {
                                                                 </span>
                                                             </a>
                                                         </div>
+
 
                                                     </div>
                                                 }
@@ -226,6 +235,14 @@ const Header = () => {
                                                                 <span>Profile</span>
                                                                 <span className={style.logOut}>
                                                                     <UserOutlined />
+                                                                </span>
+                                                            </Link>
+                                                        </div>
+                                                        <div className={style.btn}>
+                                                            <Link href={'/listOrder'}>
+                                                                <span>List Order</span>
+                                                                <span className={style.logOut} >
+                                                                    <AlertOutlined />
                                                                 </span>
                                                             </Link>
                                                         </div>

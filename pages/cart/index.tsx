@@ -191,7 +191,7 @@ function Cart() {
                                 </Col>
                                 <Col>
                                     <div className={style.continue_shopping}>
-                                        <a id="" className="btn btn-primary" href="#" role="button">Continue Shopping</a>
+                                        <Link href={'/food'} >Continue Shopping</Link>
                                     </div>
                                 </Col>
                             </Row>
