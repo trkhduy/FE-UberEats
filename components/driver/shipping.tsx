@@ -24,7 +24,7 @@ function DriverShippingPage() {
     const productService = new ProductService
     const [result, setResult] = useState(false)
     const [listOrder, setListOrder] = useState([])
-   
+
     const getOrderDriver = async () => {
         let [data, err] = await productService.getOrderDriver()
         if (!err) {
@@ -152,29 +152,29 @@ function DriverShippingPage() {
         };
 
         getLocation();
-
-        const calculateRoute = async () => {
-            if (listOrder.length == 0) {
-                return console.log('không có đơn hàng');
-            }
-            listOrder && listOrder.map((item: any, i) => {
-                setOrigin(item.restaurant.restaurant.address)
-                setDestination(item.user_address.name_address)
-
-            })
-            const directionService = new google.maps.DirectionsService();
-            const results: any = await directionService.route({
-                origin: origin,
-                destination: destination,
-                travelMode: google.maps.TravelMode.DRIVING
-            })
-            setDirection(results);
-            setDistance(results.routes[0].legs[0].distance.text);
-            setDuration(results.routes[0].legs[0].duration.text)
-        };
-
-        calculateRoute();
     }, []);
+
+    const calculateRoute = async () => {
+        if (listOrder.length == 0) {
+            return console.log('không có đơn hàng');
+        }
+        listOrder && listOrder.map((item: any, i) => {
+            setOrigin(item.restaurant.restaurant.address)
+            setDestination(item.user_address.name_address)
+        })
+        console.log('111', origin);
+        console.log('222', destination);
+
+        const directionService = new google.maps.DirectionsService();
+        const results: any = await directionService.route({
+            origin: origin as string,
+            destination: destination as string,
+            travelMode: google.maps.TravelMode.DRIVING
+        })
+        setDirection(results);
+        setDistance(results.routes[0].legs[0].distance.text);
+        setDuration(results.routes[0].legs[0].duration.text)
+    };
 
     const [map, setMap]: any = useState(/** @type google.maps.Map */ null);
     const [direction, setDirection] = useState(null);
@@ -243,6 +243,7 @@ function DriverShippingPage() {
                             }
                         </div>
                         {acpOrder && < div >
+                            <Button style={{ width: "100%", margin: "10px 0", backgroundColor: "#FFD95A", color: "#000" }} type='primary' onClick={calculateRoute} >Calculate Route</Button>
                             <Button style={{ width: "100%", margin: "10px 0", backgroundColor: "greenyellow", color: "#000" }} type='primary' onClick={() => handleAccept(listOrder[0])} >Order Successfuly</Button>
                         </div>}
                     </Col>

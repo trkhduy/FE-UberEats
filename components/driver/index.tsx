@@ -1,10 +1,10 @@
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState, useMemo, useContext } from 'react';
-import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, message } from 'antd';
-import { EnvironmentOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
-import { useLoadScript, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
+// import { useRouter } from 'next/router';
+// import { useEffect, useRef, useState, useMemo, useContext } from 'react';
+// import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, message } from 'antd';
+// import { EnvironmentOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
+// import { useLoadScript, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
 import Geocode from 'react-geocode';
-import GetMarker from '../marker/marker';
+// import GetMarker from '../marker/marker';
 
 import Head from 'next/head';
 import style from './style/home.module.scss';
@@ -18,17 +18,18 @@ import { Alert, Button, Col, Collapse, Divider, Popconfirm, Row, Space, Spin, me
 import { EnvironmentOutlined, LoadingOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoadScript, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
 import { io } from 'socket.io-client';
+import GetMarker from '../marker/marker';
 
 
 function DriverPage() {
     const { Panel } = Collapse;
     const [acpOrder, setAcpOrder] = useState(null);
 
-    const socket = useContext(WebsocketContext);
-    const productService = new ProductService();
-    const [listOrder, setListOrder]: any = useState([]);
-    const router = useRouter();
-    const socket = useContext(WebsocketContext)
+    // const socket = useContext(WebsocketContext);
+    // const productService = new ProductService();
+    // const [listOrder, setListOrder]: any = useState([]);
+    // const router = useRouter();
+
     const productService = new ProductService
     const [listOrder, setListOrder] = useState([])
     const router = useRouter()
@@ -64,22 +65,7 @@ function DriverPage() {
             };
         }
     }, [token])
-    useEffect(() => {
-        if (acpOrder) {
-            socket.off('GetOrderByDriver');
-            getDetail()
 
-            // socket.on('getDetailOrderFindDriver', () => { })
-        } else {
-            socket.on('GetOrderByDriver', () => {
-
-            });
-        }
-        return () => {
-            socket.off('connect');
-            socket.off('GetOrderByDriver');
-        }
-    }, [acpOrder]);
     const GetOrderByDriver = async () => {
         let [data, err] = await productService.getOrderDriver()
 
@@ -110,7 +96,6 @@ function DriverPage() {
     //Google map
     const [lat, setLat] = useState();
     const [lng, setLng] = useState();
-    const center: any = { lat: lat, lng: lng };
     Geocode.setApiKey(process.env.GOOGLE_MAPS_API_KEY || '')
     useEffect(() => {
         const getLocation = async () => {
@@ -140,7 +125,7 @@ function DriverPage() {
 
         getLocation();
     }, []);
-
+    const center: any = { lat: lat, lng: lng };
     const [map, setMap]: any = useState(/** @type google.maps.Map */ null);
 
     /** @type  React.MutableRefObject<HTMLInputElement> */

@@ -10,8 +10,10 @@ import ClientService from '@/service/clientService'
 import UserService from '@/service/userService'
 import CartService from '@/service/cartService'
 import ProductService from '@/service/productService'
+import { useRouter } from 'next/router'
 
 const Checkout = () => {
+    const router = useRouter()
     const clientService = new ClientService;
     const userService = new UserService;
     const cartService = new CartService;
@@ -87,9 +89,6 @@ const Checkout = () => {
     }, [])
     const productService = new ProductService
     const handleSubmit = async () => {
-        console.log(cart);
-        console.log(idAdd);
-        console.log(cart[0].product.restaurant.id);
         if (!idAdd) {
             return message.error('please choose your address')
         }
@@ -100,8 +99,6 @@ const Checkout = () => {
         }
         let [data, err] = await productService.createOrder(dataOrder)
         if (!err) {
-            console.log(data);
-
             cart.forEach(async (item: any) => {
                 let dataOrderDetail = {
                     orderid: data.result.id,
@@ -114,6 +111,7 @@ const Checkout = () => {
                 }
             });
             message.success('Successfuly!')
+            router.push("/listOrder")
         }
     }
     return (

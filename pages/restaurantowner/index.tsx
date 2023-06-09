@@ -17,7 +17,7 @@ import ListVoucher from "@/components/restaurant_owner/listVoucher";
 import axiosClient from "@/service/config/axiosInstance";
 import ProductService from "@/service/productService";
 import { resourceUsage } from "process";
-import { SmileOutlined } from "@ant-design/icons";
+import { AreaChartOutlined, SmileOutlined } from "@ant-design/icons";
 import { WebsocketContext } from "@/context/WebsocketContext";
 import { io } from "socket.io-client";
 
@@ -55,6 +55,14 @@ function RestaurentOwner() {
                 // console.log('order', listOrder);
                 getOrderRestaurant()
             })
+            socket.on('GetMessage', (message: any) => {
+                if (message == 'You have a new order!') {
+                    notification.open({
+                        message: message,
+                        icon: <AreaChartOutlined style={{ color: '#8BC34A' }} />,
+                    });
+                }
+            })
             return () => {
                 console.log('Unregistering Events...');
                 socket.off('connect');
@@ -65,6 +73,12 @@ function RestaurentOwner() {
     useEffect(() => {
         getOrderRestaurant()
         info()
+        const orderBy = listOrder.filter((e: any) => {
+            return e.status.id <= 1;
+        })
+        if (orderBy.length > 0) {
+            message.success(`You have ${orderBy.length} order !`)
+        }
     }, [])
     const info = async () => {
         const [data, err]: any = await restaurantService.getInfo()
@@ -80,15 +94,12 @@ function RestaurentOwner() {
         }
         return data
     }
-
     return (
         <>
             <div className={style.page}>
                 <div className={style.banner}> </div>
                 <div className={style.head}>
                     <div className={style.container}>
-
-
                         <Row align={"bottom"} justify={"space-between"}>
                             <Col >
                                 <div style={{ display: 'flex' }}>

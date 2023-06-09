@@ -64,7 +64,6 @@ const VoucherModal: FC<any> = ({ visible, onCreate, onCancel, voucher, formV }) 
             values.id = voucher.id
         }
         onCreate(values, () => {
-            console.log(values);
             setLoading(false);
 
             form.resetFields();
