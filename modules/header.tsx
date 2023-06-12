@@ -10,14 +10,16 @@ import useToken from '@/pages/hook/useToken';
 import UserService from '@/service/userService';
 import ClientService from '@/service/clientService';
 import { fetchCartCount, selectCartCount } from '@/redux/reducer/cartReducer';
+import CartService from '@/service/cartService';
 
 // import { updateCart } from '@/redux/reducer/cartReducer';
 const Header = () => {
     const router = useRouter();
     const cartCount = useSelector(selectCartCount);
+    const [lengthCart, setLengthCart] = useState(0);
     const dispatch = useDispatch();
     const [top, setTop] = useState(0)
-
+    const cartService = new CartService
     const userService = new UserService;
     const clientService = new ClientService;
     const [role, setRole] = useState();
@@ -30,6 +32,12 @@ const Header = () => {
         }
         if (err) {
             console.log(err);
+        }
+    }
+    const getLeghthCart = async () => {
+        let [data, err] = await cartService.getAllCart()
+        if (!err) {
+            setLengthCart(data.length)
         }
     }
 
@@ -45,11 +53,14 @@ const Header = () => {
     useEffect(() => {
         window.addEventListener('scroll', () => setTop(window.scrollY))
         getUser();
+        getLeghthCart()
         return window.removeEventListener('scroll', () => window.scrollY)
         console.log('cartC', cartCount);
 
     }, [])
-
+    useEffect(() => {
+        setLengthCart(cartCount)
+    }, [cartCount])
     const logOut = async () => {
         await userService.logOut()
         router.push('/user/login')
@@ -126,11 +137,13 @@ const Header = () => {
                                     {role && <div className={style.logged}  >
                                         <Row align={'middle'}>
                                             <Col style={{ marginRight: '20px' }}>
-                                                <Link href={'/cart'}>
-                                                    <Badge count={Number(cartCount)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
-                                                        <img src={"https://cdn-icons-png.flaticon.com/512/7646/7646966.png"} alt="" style={{ width: '3 0px', height: '30px' }} />
-                                                    </Badge>
-                                                </Link>
+                                                {role == 1 &&
+                                                    <Link href={'/cart'}>
+                                                        <Badge count={Number(cartCount)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                            <img src={"https://cdn-icons-png.flaticon.com/512/7646/7646966.png"} alt="" style={{ width: '3 0px', height: '30px' }} />
+                                                        </Badge>
+                                                    </Link>
+                                                }
                                             </Col>
                                             <Col>
                                                 <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
@@ -147,12 +160,14 @@ const Header = () => {
                                                             </Link>
                                                         </div>
                                                         <div className={style.btn}>
-                                                            <Link href={'/listOrder'}>
-                                                                <span>List Order</span>
-                                                                <span className={style.logOut} >
-                                                                    <AlertOutlined />
-                                                                </span>
-                                                            </Link>
+                                                            {role == 1 &&
+                                                                <Link href={'/listOrder'}>
+                                                                    <span>List Order</span>
+                                                                    <span className={style.logOut} >
+                                                                        <AlertOutlined />
+                                                                    </span>
+                                                                </Link>
+                                                            }
                                                         </div>
                                                         <div className={style.btn} onClick={logOut}>
                                                             <a>
@@ -175,29 +190,31 @@ const Header = () => {
                         </Col>
                         <Col className={style.menu} flex="auto" >
                             <Row align="middle" justify={'end'}>
-                                <Col>
-                                    <ul className={style.menuOptions}>
-                                        <li className={clsx([style.option])}><Link href={''}>Restaurant</Link></li>
-                                        <li className={style.option}><Link href={'/food'}>Food</Link></li>
-                                        <li className={style.option}><Link href={'/voucher'}>Voucher</Link></li>
-                                        <li className={style.headerForm}>
-                                            <div className={style.iconLocation}>
-                                                <EnvironmentOutlined />
-                                            </div>
-                                            <Select
-                                                className={style.selectForm}
-                                                defaultValue="lucy"
-                                                style={{ width: 200 }}
-                                                onChange={handleChange}
-                                                options={[
-                                                    { value: 'jack', label: 'Jack' },
-                                                    { value: 'lucy', label: 'Lucy' },
-                                                    { value: 'Yiminghe', label: 'yiminghe' },
-                                                ]}
-                                            />
-                                        </li>
-                                    </ul>
-                                </Col>
+                                {role == 1 &&
+                                    <Col>
+                                        <ul className={style.menuOptions}>
+                                            <li className={clsx([style.option])}><Link href={''}>Restaurant</Link></li>
+                                            <li className={style.option}><Link href={'/food'}>Food</Link></li>
+                                            <li className={style.option}><Link href={'/voucher'}>Voucher</Link></li>
+                                            <li className={style.headerForm}>
+                                                <div className={style.iconLocation}>
+                                                    <EnvironmentOutlined />
+                                                </div>
+                                                <Select
+                                                    className={style.selectForm}
+                                                    defaultValue="lucy"
+                                                    style={{ width: 200 }}
+                                                    onChange={handleChange}
+                                                    options={[
+                                                        { value: 'jack', label: 'Jack' },
+                                                        { value: 'lucy', label: 'Lucy' },
+                                                        { value: 'Yiminghe', label: 'yiminghe' },
+                                                    ]}
+                                                />
+                                            </li>
+                                        </ul>
+                                    </Col>
+                                }
                                 <Col>
                                     {!role && <div>
                                         <Row>
@@ -218,11 +235,11 @@ const Header = () => {
                                     {role && <div className={style.logged}  >
                                         <Row align={'middle'}>
                                             <Col style={{ marginRight: '20px' }}>
-                                                <Link href={'/cart'}>
-                                                    <Badge count={Number(cartCount)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
+                                                {role == 1 && <Link href={'/cart'}>
+                                                    <Badge count={Number(lengthCart)} style={{ background: '#FFD95A', color: '#4D3C3C', fontWeight: "700" }}>
                                                         <img src="https://cdn-icons-png.flaticon.com/512/7646/7646966.png" alt="" style={{ width: '3 0px', height: '30px' }} />
                                                     </Badge>
-                                                </Link>
+                                                </Link>}
                                             </Col>
                                             <Col>
                                                 <div onClick={() => setCollapse((aa) => !aa)} style={{ cursor: 'pointer' }}>
@@ -239,12 +256,14 @@ const Header = () => {
                                                             </Link>
                                                         </div>
                                                         <div className={style.btn}>
-                                                            <Link href={'/listOrder'}>
-                                                                <span>List Order</span>
-                                                                <span className={style.logOut} >
-                                                                    <AlertOutlined />
-                                                                </span>
-                                                            </Link>
+                                                            {role == 1 &&
+                                                                <Link href={'/listOrder'}>
+                                                                    <span>List Order</span>
+                                                                    <span className={style.logOut} >
+                                                                        <AlertOutlined />
+                                                                    </span>
+                                                                </Link>
+                                                            }
                                                         </div>
                                                         <div className={style.btn} onClick={logOut}>
                                                             <a>

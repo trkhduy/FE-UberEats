@@ -111,6 +111,7 @@ const Checkout = () => {
                 }
             });
             message.success('Successfuly!')
+                
             router.push("/listOrder")
         }
     }
