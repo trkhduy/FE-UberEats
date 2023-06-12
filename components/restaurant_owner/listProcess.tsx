@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import style from "./style/processOrder.module.scss"
-import { Button, Col, Collapse, Divider, Popconfirm, Rate, Row, Space, message } from "antd";
+import { Button, Col, Collapse, Divider, Empty, Popconfirm, Rate, Row, Space, message } from "antd";
 import clsx from "clsx";
 import { EnvironmentOutlined } from "@ant-design/icons";
 import useToken from "@/pages/hook/useToken";
@@ -99,7 +99,7 @@ const ProcessOrder: FC<any> = ({ title, data }) => {
                 </div>
                 <div className={style.list}>
                     <Space direction="vertical" style={{ width: '100%' }}>
-                        {listOP.map((item: any) => (
+                        {listOP.length > 0 ? listOP.map((item: any) => (
                             <Collapse className={style.coll} style={{ width: "100%", position: 'relative' }}  >
                                 <Panel header={Header('#' + item.id, item.status, getPrice(item), item)} key="1"  >
                                     {InforOrderer(item.user_address)}
@@ -143,7 +143,9 @@ const ProcessOrder: FC<any> = ({ title, data }) => {
                                 </Panel>
 
                             </Collapse>
-                        ))}
+                        ))
+                            : <Empty />
+                        }
 
                     </Space>
 

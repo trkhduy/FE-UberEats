@@ -34,4 +34,9 @@ export default class CartService {
             .then((data) => [data, null])
             .catch((err) => [null, err])
     }
+    async deteteCartMany(id: any) {
+        return await axiosClient.post('/cart/delete', id)
+            .then((data) => [data, null])
+            .catch((err) => [null, err])
+    }
 }

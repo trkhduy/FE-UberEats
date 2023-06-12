@@ -164,16 +164,18 @@ function DriverShippingPage() {
         })
         console.log('111', origin);
         console.log('222', destination);
+        if (origin && destination) {
+            const directionService = new google.maps.DirectionsService();
+            const results: any = await directionService.route({
+                origin: origin as string,
+                destination: destination as string,
+                travelMode: google.maps.TravelMode.DRIVING
+            })
+            setDirection(results);
+            setDistance(results.routes[0].legs[0].distance.text);
+            setDuration(results.routes[0].legs[0].duration.text)
+        }
 
-        const directionService = new google.maps.DirectionsService();
-        const results: any = await directionService.route({
-            origin: origin as string,
-            destination: destination as string,
-            travelMode: google.maps.TravelMode.DRIVING
-        })
-        setDirection(results);
-        setDistance(results.routes[0].legs[0].distance.text);
-        setDuration(results.routes[0].legs[0].duration.text)
     };
 
     const [map, setMap]: any = useState(/** @type google.maps.Map */ null);
